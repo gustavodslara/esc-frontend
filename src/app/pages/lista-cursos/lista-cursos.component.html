@@ -90,8 +90,7 @@
           </td>
           <td class="alturamin">{{ curso.tituloEvento }}</td>
           <td class="alturamin">
-            {{ curso.dataInicio | date : "dd/MM/yyyy" }} -
-            {{ curso.dataFim | date : "dd/MM/yyyy" }}
+            {{ getDataInicio(curso) | date: 'dd/MM/yyyy' }} - {{ getDataFim(curso) | date: 'dd/MM/yyyy' }}
           </td>
           <td class="alturamin">
             <button

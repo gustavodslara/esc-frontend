@@ -252,7 +252,10 @@ export class ListaCursosComponent {
     this.modalStatusVisivel = false;
   }
 
+
+
   os = {
+    datasHorarios: [ { data: '', horaInicio: '', horaFim: ''}],
     id: '',
     unidadeSolicitante: '',
     tituloEvento: '',
@@ -267,8 +270,8 @@ export class ListaCursosComponent {
     coordenadorGeral: '', // Dropdown com opções predefinidas
     coordenadorApoioInstitucional: '', // Dropdown com opções predefinidas
     coordenadorAcaoCapacitacao: '',
-    coordenacaoApoioAcao: '',
-    coordenacaoApoioOperacional: '',
+    coordenacaoApoioAcao: [''],
+    coordenacaoApoioOperacional: [''],
     equipeTecnica: '',
     equipeTecnica2: '',
     equipeTecnica3: '',
@@ -279,7 +282,32 @@ export class ListaCursosComponent {
     local: '',
     publicoAlvo: '',
     status: '',
+    publicoPrevisto: '',
+    objetivo:'',
+    publicoAlvomr: '',
+    linkinscricao: '',
+
   };
+
+
+  getDataInicio(curso: any): string {
+    return curso.datasHorarios?.length ? curso.datasHorarios[0].data : '';
+  }
+  
+  getDataFim(curso: any): string {
+    return curso.datasHorarios?.length ? curso.datasHorarios[curso.datasHorarios.length - 1].data : '';
+  }
+
+
+  criarDatas() {
+    if (this.os.datasHorarios.length > 0) {
+      const ultimoIndex = this.os.datasHorarios.length - 1;
+      this.os.dataInicio = this.os.datasHorarios[ultimoIndex].data;
+    }
+  }
+
+  
+
 
   sinalizaReloadPage() {
     this.carregarDados();
@@ -318,4 +346,5 @@ export class ListaCursosComponent {
     //   alert('Por favor, preencha todos os campos para adicionar o curso.');
     // }
   }
+
 }

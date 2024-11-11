@@ -1,25 +1,10 @@
-* {
-    font-family: sans-serif;
-
-
-    nav{
-        margin-top: 10px;
-        li{
-            cursor: pointer;
-        }
-    }
-}
-
-
-
-
 /* Estilos principais */
 .headerLogoEscola {
   display: flex;
   align-items: center;
   justify-content: space-between;
   background-color: #0056b3;
-  padding: 10px 20px;
+  padding: 10px 10px;
   color: white;
   position: fixed;
   width: 100%;
@@ -51,7 +36,7 @@
   margin: 0;
   justify-content: space-between;
   width: 100%;
-  max-width: 500px; /* Define uma largura máxima */
+  max-width: 400px; /* Define uma largura máxima */
 }
 
 .link {
@@ -139,7 +124,7 @@
   }
 
   .logo {
-    max-width: 200px; /* Diminui o logo em telas menores */
+    max-width: 100px; /* Diminui o logo em telas menores */
   }
 
   .notificationNav, .loginNav {
@@ -173,8 +158,8 @@
   .logo {
     max-width: 150px;
   }
-}
 
+  .nomeLogin:hover {
 .textb {
   color: black!important;
 }
