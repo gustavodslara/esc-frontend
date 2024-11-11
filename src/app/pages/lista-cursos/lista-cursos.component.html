@@ -1,5 +1,4 @@
-<app-navbar style="position: fixed;min-height: 100px; min-width: 100%; z-index:9999999999999999999999999999999999999!important;"></app-navbar>
-<div  style="padding-top: 30px;" class="container" >
+'<div class="container" >
   <div class="container" style="margin-top: 70px">
     <h1 style="display: flex; justify-content: left; padding-bottom: 5px">
       Lista de Cursos
@@ -16,9 +15,9 @@
         (change)="filterCursos(selectedStatus)"
       >
         <option value="Todos">Todos</option>
-        <option value="agendado">Agendado</option>
-        <option value="andamento">Em andamento</option>
-        <option value="finalizado">Finalizado</option>
+        <option value="Agendado">Agendado</option>
+        <option value="Em andamento">Em andamento</option>
+        <option value="Finalizado">Finalizado</option>
       </select>
       <label for="filtro-ano">Ano:</label>
       <select
@@ -90,8 +89,7 @@
           </td>
           <td class="alturamin">{{ curso.tituloEvento }}</td>
           <td class="alturamin">
-            {{ curso.dataInicio | date : "dd/MM/yyyy" }} -
-            {{ curso.dataFim | date : "dd/MM/yyyy" }}
+            {{ getDataInicio(curso) | date: 'dd/MM/yyyy' }} - {{ getDataFim(curso) | date: 'dd/MM/yyyy' }}
           </td>
           <td class="alturamin">
             <button
@@ -110,7 +108,7 @@
           </button> -->
           </td>
           <td class="flex-center alturamin">
-            <a *ngIf="user.isCoordenador || user.isEstagiario" class="delete-link" (click)="os.id = curso.id; deletando = true"
+            <a class="delete-link" (click)="os.id = curso.id; deletando = true"
               ><i class="bi bi-x-circle"></i
             ></a>
           </td>
@@ -121,7 +119,7 @@
     <div class="container">
       <div class="add-course">
         <button
-       *ngIf="user.isCoordenador || user.isEstagiario"   type="button"
+          type="button"
           class="btn btn-primary"
           data-bs-toggle="button"
           (click)="goToEditId(getUltimoId2())"

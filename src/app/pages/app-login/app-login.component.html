@@ -1,4 +1,3 @@
-
 <div class="login-container">
   <div class="login-box">
     <img src="logologin.png" alt="logo escola de contas" class="logo">
@@ -7,24 +6,22 @@
       <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)">
         <div class="form-group">
           <label for="login" class="form-label">Usuário</label>
-          <input type="text" id="login" name="login" class="form-input" ngModel required
-            placeholder="Digite seu nome de usuário" />
+          <input type="text" id="login" name="login" class="form-input" ngModel required placeholder="Digite seu nome de usuário"/>
         </div>
         <div class="form-group">
           <label for="password" class="form-label">Senha</label>
-          <input type="password" id="password" name="password" class="form-input" ngModel required
-            placeholder="Digite sua senha" />
+          <input type="password" id="password" name="password" class="form-input" ngModel required placeholder="Digite sua senha"/>
         </div>
 
         <!-- Checkbox "Salvar senha" -->
         <div class="form-group checkbox-group">
-          <input type="checkbox" id="remember" name="remember" class="form-checkbox" ngModel
-            style="margin-right: 10px;" />
-          <label for="remember" class="checkbox-label">Lembrar de mim</label>
+          <input type="checkbox" id="remember" name="remember" class="form-checkbox" ngModel style="margin-right: 10px;"/>
+          <label for="remember" class="checkbox-label" >Lembrar de mim</label>
         </div>
-        <p style="color: rgb(230, 21, 21);" *ngIf="modalCred">Login e/ou Senha Incorreta! Tente novamente</p>
-
-        <button type="submit" class="btn-primary">Entrar</button>
+        
+        <p *ngIf ="modalCred">Erro! Tente novamente</p>
+                <!-- Botao Entrar -->
+        <button type="submit" class="btn-primary" (click)="ativaErroLogin()">Entrar</button>
       </form>
     </div>
   </div>

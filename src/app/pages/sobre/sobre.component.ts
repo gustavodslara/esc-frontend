@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
-import { NavbarComponent } from '../../components/navbar/navbar.component';
 
 @Component({
   selector: 'app-sobre',
   standalone: true,
-  imports: [NavbarComponent],
+  imports: [],
   templateUrl: './sobre.component.html',
   styleUrl: './sobre.component.scss'
 })

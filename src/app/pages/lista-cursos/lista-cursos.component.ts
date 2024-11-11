@@ -11,8 +11,6 @@ import {
 } from '@angular/router';
 import { EditarCursoModalComponent } from '../editar-curso-modal/editar-curso-modal.component';
 import { environment } from '../../services/enviroment';
-import { NavbarComponent } from '../../components/navbar/navbar.component';
-import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -26,7 +24,6 @@ import { AuthService } from '../../services/auth.service';
     RouterModule,
     RouterLink,
     RouterLinkActive,
-    NavbarComponent
   ],
   templateUrl: './lista-cursos.component.html',
   styleUrl: './lista-cursos.component.scss',
@@ -38,11 +35,12 @@ export class ListaCursosComponent {
   selectedYear: string = 'todos';
   editando = false;
   isEditando: any;
+  curso: any;
   editarCurso() {
     this.editandoCurso = true;
   }
   carregando = true;
-  constructor(private http: HttpClient, private router: Router,private authService: AuthService) {}
+  constructor(private http: HttpClient, private router: Router) {}
   apiUrl = environment.jsonServerUrl;
   listaCursos: any;
   listaCursosBackup: any;
@@ -50,19 +48,8 @@ export class ListaCursosComponent {
   async ngOnInit() {
     this.carregarDados();
     this.filterAparecerTodos();
-
-
-    this.authService.isLoggedUser$.subscribe((isLoggedUser) => {
-      this.isLoggedUser = isLoggedUser;
-      console.log(isLoggedUser);
-    });
-    this.user = await this.authService.getUser(this.isLoggedUser);
-    this.isDisabled = this.user.isCoordenador == true || this.user.isEstagiario == true ? false : true;
   }
-  isLoggedUser = "";
 
-  isDisabled = false;
-  user:any = {};
 
   filterAparecerTodos() {
     this.selectedStatus = 'Todos';
@@ -71,15 +58,16 @@ export class ListaCursosComponent {
   idCursoSelecionado = '';
 
   newStatus() {
-    this.os.status = 'agendado';
+    this.os.status = 'em andamento';
     this.os.status = this.selectedEditStatus;
   }
+
 
   async carregarDados() {
     this.carregando = true;
     setTimeout(async () => {
       var res: any = await this.http
-        .get(this.apiUrl+'/os', {
+        .get(this.apiUrl+'../os', {
           headers: {
            
           },
@@ -223,9 +211,9 @@ export class ListaCursosComponent {
 
   async deletaCurso(id: any) {
     this.carregando = true;
-    console.log(this.apiUrl+'/os' + id);
+    console.log(this.apiUrl+'../os' + id);
     var res = await this.http
-      .delete(`${this.apiUrl}/os/${id}`)
+      .delete(`${this.apiUrl}../os/${id}`)
       .toPromise();
     this.carregando = true;
     setTimeout(() => {
@@ -252,7 +240,10 @@ export class ListaCursosComponent {
     this.modalStatusVisivel = false;
   }
 
+
+
   os = {
+    datasHorarios: [ { data: '', horaInicio: '', horaFim: ''}],
     id: '',
     unidadeSolicitante: '',
     tituloEvento: '',
@@ -267,8 +258,8 @@ export class ListaCursosComponent {
     coordenadorGeral: '', // Dropdown com opções predefinidas
     coordenadorApoioInstitucional: '', // Dropdown com opções predefinidas
     coordenadorAcaoCapacitacao: '',
-    coordenacaoApoioAcao: '',
-    coordenacaoApoioOperacional: '',
+    coordenacaoApoioAcao: [''],
+    coordenacaoApoioOperacional: [''],
     equipeTecnica: '',
     equipeTecnica2: '',
     equipeTecnica3: '',
@@ -279,7 +270,32 @@ export class ListaCursosComponent {
     local: '',
     publicoAlvo: '',
     status: '',
+    publicoPrevisto: '',
+    objetivo:'',
+    publicoAlvomr: '',
+    linkinscricao: '',
+
   };
+
+
+  getDataInicio(curso: any): string {
+    return curso.datasHorarios?.length ? curso.datasHorarios[0].data : '';
+  }
+  
+  getDataFim(curso: any): string {
+    return curso.datasHorarios?.length ? curso.datasHorarios[curso.datasHorarios.length - 1].data : '';
+  }
+
+
+  criarDatas() {
+    if (this.os.datasHorarios.length > 0) {
+      const ultimoIndex = this.os.datasHorarios.length - 1;
+      this.os.dataInicio = this.os.datasHorarios[ultimoIndex].data;
+    }
+  }
+
+  
+
 
   sinalizaReloadPage() {
     this.carregarDados();
@@ -318,4 +334,5 @@ export class ListaCursosComponent {
     //   alert('Por favor, preencha todos os campos para adicionar o curso.');
     // }
   }
+
 }

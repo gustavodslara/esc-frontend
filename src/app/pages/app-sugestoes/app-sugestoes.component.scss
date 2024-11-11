@@ -1,0 +1,209 @@
+/* Estilo geral */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+/* Header flutuante e arredondado */
+header {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 123, 255, 0.9); /* Azul translúcido */
+    padding: 15px 40px;
+    border-radius: 50px; /* Bordas arredondadas */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Sombra para destaque */
+    z-index: 1000;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: max-content;
+}
+
+header h1 {
+    margin: 0;
+    color: white;
+    font-size: 1.8em;
+    flex-grow: 1;
+}
+
+/* Botão redondo com ícone de adicionar */
+header button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 50%; /* Botão redondo */
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-left: 20px;
+}
+
+header button:hover {
+    background-color: #218838;
+}
+
+header button::before {
+    font-weight: bold;
+}
+
+/* Espaçamento abaixo do header para evitar sobreposição */
+#muralSugestoes {
+    margin: 100px auto; /* Adiciona espaço abaixo do header */
+    max-width: 90%;
+    padding: 20px;
+}
+
+/* Box translúcida para os cards de sugestões */
+.card {
+    background-color: rgba(255, 255, 255, 0.8); /* Cor branca translúcida */
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: scale(1.02); /* Pequeno zoom ao passar o mouse */
+}
+
+.card h3 {
+    margin: 0;
+    font-size: 1.2em;
+    color: #007bff;
+}
+
+.card p {
+    margin: 5px 0;
+    color: #555;
+}
+
+.card .data {
+    font-size: 0.9em;
+    color: #999;
+    text-align: left;
+}
+
+/* Modal translúcido */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 60px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro translúcido */
+}
+
+.modal-content {
+    background-color: rgba(255, 255, 255, 0.9); /* Branco translúcido */
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.2); /* Borda mais clara */
+    width: 80%;
+    max-width: 600px;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+/* Fechar modal */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover, .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Campos de input e textareas */
+label, textarea, input {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+    padding: 10px;
+    font-size: 1em;
+    border-radius: 5px;
+}
+
+/* Botão de postagem */
+button {
+    width: 100px;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 1.4em;
+    }
+
+    header button {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2em;
+    }
+
+    .modal-content {
+        width: 90%;
+        padding: 15px;
+    }
+
+    .card {
+        padding: 10px;
+    }
+
+    #muralSugestoes {
+        margin: 120px auto; /* Ajuste para evitar sobreposição */
+    }
+}
+
+/* Responsividade para celulares */
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.2em;
+    }
+
+    header button {
+        width: 35px;
+        height: 35px;
+        font-size: 1em;
+    }
+
+    .modal-content {
+        width: 95%;
+        padding: 10px;
+    }
+
+    .card {
+        padding: 8px;
+        margin-bottom: 10px;
+    }
+}

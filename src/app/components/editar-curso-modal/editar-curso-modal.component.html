@@ -1,0 +1,114 @@
+<main id="dataToExport" #dataToExport>
+  <img class="distancialogo" src="logo.jpeg" *ngIf="imprimir" style="max-width: 100%;">
+    <h1>Ordem de Serviço</h1>
+    <div class="info-table">
+      <div  class="row marginzero">
+        <div class="label padzero">Unidade Solicitante:</div>
+        <div class="input padzero"><input  [(ngModel)]="os.unidadeSolicitante" type="text" id="unidadeSolicitante"></div>
+      </div>
+      <div class="row marginzero">
+        <div class="label padzero">Ação Educacional:</div>
+        <div class="input padzero"><input [(ngModel)]="os.tituloEvento" type="text" id="tituloEvento"></div>
+      </div>
+      <div class="row half-row marginzero">
+        <div class="label"class= "label padzero">Data de Início:</div>
+        <div class="input" class="input padzero"><input [(ngModel)]="os.dataInicio" type="date" id="dataInicio"></div>
+        <div class="label" class="label padzero">Data de Finalização:</div>
+        <div class="input" class="input padzero"><input [(ngModel)]="os.dataFim" type="date" id="dataFinalizacao"></div>
+      </div>
+      <div class="row half-row marginzero">
+        <div class="label" class="label padzero">Horário de Início:</div>
+        <div class="input" class="input padzero"><input [(ngModel)]="os.horaInicio" type="time" id="horarioInicio"></div>
+        <div class="label" class="label padzero">Horário de Término:</div>
+        <div class="input" class="input padzero"><input [(ngModel)]="os.horaFim" type="time" id="horarioTermino"></div>
+      </div>
+      <div *ngIf="isEditando" class="row marginzero">
+        <div class="label" class="label padzero">Quantidade de Participantes:</div>
+        <div class="input" class="input padzero"><input [(ngModel)]="os.quantidadeParticipantes" type="number" id="quantidadeParticipantes"></div>
+      </div>
+      <div *ngIf="isEditando" class="row marginzero">
+        <div class="label"class="label padzero">Carga Horária:</div>
+        <div class="input" class="input padzero"><input [(ngModel)]="os.cargaHoraria" type="number" id="cargaHoraria"></div>
+      </div>
+      <div class="row" class="row marginzero">
+        <div class="label" >Modalidade:</div>
+        <div class="input" class="input padzero">
+          <select [(ngModel)]="os.modalidade" id="modalidade">
+            <option value="presencial">Presencial</option>
+            <option value="online">Online</option>
+            <option value="hibrido">Híbrido</option>
+            <option value="ead">EAD</option>
+          </select>
+        </div>
+      </div>
+      <div class="row" class="row marginzero">
+        <div class="label" class="label padzero">Demanda:</div>
+        <div class="input" class="input padzero">
+          <select [(ngModel)]="os.demanda" id="demanda">
+            <option value="interna">Interna</option>
+            <option value="externa">Externa</option>
+          </select>
+        </div>
+      </div>
+      <div class="row" class="row marginzero">
+        <div class="label" class="label padzero">Coordenador Geral:</div>
+        <div class="input" class="input padzero"><input [(ngModel)]="os.coordenadorGeral" type="text" id="coordenadorGeral" value="Marcos José da Silva" rows="1" ></div>
+      </div>
+      <div class="row" class="row marginzero">
+        <div class="label" class="label padzero">Coordenadoria de Apoio Institucional:</div>
+        <div class="input" class="input padzero"><input [(ngModel)]="os.coordenadorApoioInstitucional" type="text" id="coordenadoriaApoioInstitucional" value="Carlos Arantes" ></div>
+      </div>
+      <div class="row" class="row marginzero">
+        <div class="label" class="label padzero">Coordenadoria de Capacitação:</div>
+        <div class="input" class="input padzero">
+          <select [(ngModel)]="os.coordenadorAcaoCapacitacao" id="coordenadoriaCapacitacao">
+            <option value="marina">Marina</option>
+            <option value="clenilda">Clenilda</option>
+          </select>
+        </div>
+      </div>
+      <div class="row" class="row marginzero">
+        <div class="label" class="label padzero">Coordenação de Apoio da Ação:</div>
+        <div class="input" class="input padzero"><input [(ngModel)]="os.coordenacaoApoioAcao" type="text" id="coordenacaoApoioAcao"></div>
+      </div>
+      <div class="row" class="row marginzero">
+        <div class="label" class="label padzero">Coordenação de Apoio Operacional:</div>
+        <div class="input" class="input padzero"><input [(ngModel)]="os.coordenacaoApoioOperacional" type="text" id="coordenacaoApoioOperacional"></div>
+      </div>
+      <div class="row" [ngClass]="imprimir ? 'espacoImprimir' : ''">
+        <div class="label" class="label padzero">Equipe Técnica:</div>
+        <div class="input padzero" class="organizarChecks" class="checkbox-item">
+          <label class="organizarChecks" class="checkbox-item input"><input [(ngModel)]="os.equipeTecnica" type="checkbox" id="equipeTecnica1">Criar link</label>
+          <label class="organizarChecks" class="checkbox-item input"><input [(ngModel)]="os.equipeTecnica2" type="checkbox" id="equipeTecnica2">Elaborar e encaminhar avaliação</label>
+          <label class="organizarChecks" class="checkbox-item input"><input [(ngModel)]="os.equipeTecnica3" type="checkbox" id="equipeTecnica3">Emitir Certificado</label>
+          <label class="organizarChecks" class="checkbox-item input"><input [(ngModel)]="os.equipeTecnica4" type="checkbox" id="equipeTecnica4">Emitir Relatório Final</label>
+        </div>
+      </div>
+      <div class="row" class="row marginzero">
+        <div class="label" class="label padzero">Equipe Jurídica:</div>
+        <div class="input" class="input padzero"><input [(ngModel)]="os.equipeJuridica" type="text" id="equipeJuridica"></div>
+      </div>
+      <div class="row" class="row marginzero">
+        <div class="label" class="label padzero">Observação:</div>
+        <div class="input" class="input padzero"><textarea [(ngModel)]="os.observacao" id="observacao" rows="2"></textarea></div>
+      </div>
+      <div class="row" class="row marginzero">
+        <div class="label" class="label padzero">Ordem de Serviço elaborada por:</div>
+        <div class="input" class="input padzero"><input [(ngModel)]="os.osElaboradaPor" type="text" id="ordemServicoPor"></div>
+      </div>
+      <div class="row" class="row marginzero">
+        <div class="label" class="label padzero">Local:</div>
+        <div class="input" class="input padzero"><input [(ngModel)]="os.local" type="text" id="local"></div>
+      </div>
+      <div class="row" class="row marginzero">
+        <div class="label" class="label padzero">Público-alvo:</div>
+        <div class="input" class="input padzero"><input [(ngModel)]="os.publicoAlvo" type="text" id="publicoAlvo"></div>
+      </div>
+    </div>
+    <div class="modal-buttons">
+      <button class="btn btn-primary" class="padbtn" *ngIf="!imprimir && isEditando" (click)="salvarRelatorio()">Gerar Relatório</button>
+      <button class="btn btn-primary" class="padbtn" *ngIf="!imprimir" (click)="salvaCurso(os); recarregaPagina(); ">Confirmar</button>
+      <button class="btn btn-danger"class="padbtn"  *ngIf="!imprimir" (click)=" fechar()">Cancelar</button>
+    </div>
+  </main>
+  

@@ -29,47 +29,34 @@ import { AuthService } from '../../services/auth.service';
   styleUrl: './app-login.component.scss',
 })
 export class AppLoginComponent {
-
-  public static isCoordenador = false;
-  public static isEstagiario = false;
   isLoggedIn: boolean = false;
   isLoggedUser: string = '';
+  modalCred: boolean = false;
   constructor(private authService: AuthService, private route: Router) {}
-  modalCred = false;
+
   onSubmit(loginForm: NgForm): void {
     if (loginForm.valid) {
       // Check if the form is valid
       const credentials = loginForm.value; // Get the form values
       this.authService
         .login(credentials)
-        .then(async () => {
-          let user = await this.authService.getUser(credentials.login);
-          console.log(user);
-          AppLoginComponent.isCoordenador = user.isCoordenador;
-          AppLoginComponent.isEstagiario = user.isEstagiario;
+        .then(() => {
           // Login successful, navigate to the protected route
-          if(user.password != "SenhaDefault"){this.route.navigate(['/']);
-      } else{
-        this.route.navigate(['/loginconfig'], { queryParams: { senha: true} });
-      }  })
+          this.route.navigate(['/home']);
+        })
         .catch((error) => {
           // Handle login error (e.g., show an error message)
           this.modalCred = true;
           console.error('Login error:', error);
-          return;
         });
-    } else {
-      this.modalCred = true;
-      return;
     }
   }
 
+  ativaErroLogin() {
+    this.modalCred = true;
+  }
 
   ngOnInit() {
-    this.authService.erroLogin$.subscribe((erroLogin:boolean) => {
-      this.modalCred = erroLogin;
-    });
-
     this.authService.isLoggedUser$.subscribe((isLoggedIn) => {
       this.isLoggedUser = isLoggedIn;
     });

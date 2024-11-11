@@ -16,9 +16,7 @@ import { MenuDocsComponent } from '../../components/menu-docs/menu-docs.componen
 import { WebsocketService } from '../../services/websocket.service';
 import { saveAs } from 'file-saver';
 import { environment } from '../../services/enviroment';
-import { NavbarComponent } from '../../components/navbar/navbar.component';
-import { ToastrModule, ToastrService } from 'ngx-toastr';
-import { AuthService } from '../../services/auth.service';
+import { NotificacoesComponent } from '../notificacoes/notificacoes.component';
 
 @Component({
   selector: 'app-editar-curso-modal',
@@ -29,8 +27,6 @@ import { AuthService } from '../../services/auth.service';
     CommonModule,
     EditarCursoModalComponent,
     MenuDocsComponent,
-    NavbarComponent,
-    ToastrModule,
   ],
   templateUrl: './editar-curso-modal.component.html',
   styleUrl: './editar-curso-modal.component.scss',
@@ -40,17 +36,48 @@ export class EditarCursoModalComponent {
   selectedEditStatus: any;
   exibirCurso: any = false;
   curso: any;
-  closeAddModal() { }
+  stId: any;
+  closeAddModal() {}
 
   exibirMenuOS = true;
   exibirMenuTR = true;
   exibirMenuMR = true;
   exibirMenuRF = true;
+  exibirMenuAnexos = true;
 
   faseAtual = 0;
 
+  
+  Osvisivel = true;
+  Trvisivel = true;
+  Mrvisivel = true;
+  Acvisivel = true;
+  Rfvisivel = true;
+  Anexosvisivel = true;
+
+  trocarStatus() {
+    if(this.selectedStatus === 'Agendado') {
+      this.os.status = 'Agendado';
+      this.os.status = this.selectedEditStatus;
+    } else {
+      if(this.selectedStatus === 'Em andamento') {
+        this.os.status = 'Em andamento';
+        this.os.status = this.selectedEditStatus;
+      } else {
+        if(this.selectedStatus === 'Finalizado') {
+          this.os.status = 'Finalizado';
+          this.os.status = this.selectedEditStatus;
+        }
+      }
+    }
+
+  }
+
   async ngOnInit() {
-    this.carregando = true;
+    if (this.os.datasHorarios.length === 0) {
+      this.adicionarDataHorario();
+    }
+    this.adicionarDataHorario();
     this.route.params.subscribe((params) => {
       this.idCurso = params['idCurso'];
       this.isEditando = params['isEditando'] === 'true' ? true : false;
@@ -62,27 +89,11 @@ export class EditarCursoModalComponent {
       console.log(this.isEditando);
       setTimeout(async () => {
         await this.carregarDadoCursoEditando();
-        this.carregando = false;
       }, 650);
-    } else {
-      this.carregando = false;
-
     }
     this.os.id = this.idCurso + '';
-
-
-    this.authService.isLoggedUser$.subscribe((isLoggedUser) => {
-      this.isLoggedUser = isLoggedUser;
-      console.log(isLoggedUser);
-    });
-    this.user = await this.authService.getUser(this.isLoggedUser);
-    this.isDisabled = this.user.isCoordenador == true || this.user.isEstagiario == true ? false : true;
-    console.log("teeasdasda");
-    console.log(this.isDisabled);
-
   }
-  isLoggedUser = "";
-  user: any = {};
+
   apiUrl = environment.jsonServerUrl;
 
   constructor(
@@ -90,9 +101,7 @@ export class EditarCursoModalComponent {
     private http: HttpClient,
     private router: Router,
     private websocketService: WebsocketService,
-    private toastr: ToastrService,
-    private authService: AuthService
-  ) { }
+  ) {}
 
   isEditando: boolean | undefined;
   @Input() idCurso: any;
@@ -110,7 +119,7 @@ export class EditarCursoModalComponent {
   async carregarDadoCursoEditando() {
     if (this.isEditando) {
       let res: any = await this.http
-        .get(this.apiUrl + '/os/' + this.idCurso)
+        .get(this.apiUrl+'./os/' + this.idCurso)
         .toPromise();
       this.os = res;
 
@@ -121,7 +130,7 @@ export class EditarCursoModalComponent {
         let trr: any = this.os.tr;
         this.trId = this.os.idTr;
         let res2: any = await this.http
-          .get(this.apiUrl + '/tr/' + this.trId)
+          .get(this.apiUrl+'./tr/' + this.trId)
           .toPromise();
         this.termoRecisao = res2;
       } else {
@@ -157,13 +166,14 @@ export class EditarCursoModalComponent {
   }
 
   addField() {
-    // this.os.equipeJuridica = [''].concat(this.os.equipeJuridica);
+    this.os.equipeJuridica = [''].concat(this.os.equipeJuridica);
   }
 
   equip1 = false;
   equip2 = false;
   equip3 = false;
   equip4 = false;
+  equipeJuridica = false;
 
   termoRecisao = {
     esc: '',
@@ -195,23 +205,71 @@ export class EditarCursoModalComponent {
 
   exibirTr = false;
   exibirOs = true;
+  exibirMr = false;
+  exibirRf = false;
+  exibirAnexos = false;
+
 
   proximaPagina() {
     this.exibirTr = !this.exibirTr;
     this.exibirOs = !this.exibirOs;
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   scrollUp() {
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   proximaPaginaOs() {
+    this.exibirOs = this.exibirOs;
+    this.exibirTr = !this.exibirTr;
+    this.exibirMr = !this.exibirMr;
+    this.exibirRf = !this.exibirRf;
+    this.exibirAnexos = !this.exibirAnexos;
+    this.faseAtual = this.faseAtual == 0 ? 1 : 0;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  proximaPaginaMr() {
     this.exibirOs = !this.exibirOs;
     this.exibirTr = !this.exibirTr;
+    this.exibirMr = this.exibirMr;
+    this.exibirAnexos = !this.exibirAnexos;
     this.faseAtual = this.faseAtual == 0 ? 1 : 0;
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+
+  proximaPaginaRf() {
+    this.exibirOs = !this.exibirOs;
+    this.exibirTr = !this.exibirTr;
+    this.exibirMr = !this.exibirMr;
+    this.exibirAnexos = !this.exibirAnexos;
+    this.exibirRf = this.exibirRf;
+    this.faseAtual = this.faseAtual == 0 ? 1 : 0;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  proximaPaginaTr() {
+    this.exibirOs = !this.exibirOs;
+    this.exibirTr = this.exibirTr;
+    this.exibirMr = !this.exibirMr;
+    this.exibirAnexos = !this.exibirAnexos;
+    this.exibirRf = !this.exibirRf;
+    this.faseAtual = this.faseAtual == 0 ? 1 : 0;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  
+  proximaPaginaAnexos() {
+    this.exibirOs = !this.exibirOs;
+    this.exibirTr = !this.exibirTr;
+    this.exibirMr = !this.exibirMr;
+    this.exibirRf = !this.exibirRf;
+    this.exibirAnexos = this.exibirAnexos;
+    this.faseAtual = this.faseAtual == 0 ? 1 : 0;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+
 
   // changePositionCondition:boolean = false;
 
@@ -225,11 +283,9 @@ export class EditarCursoModalComponent {
     console.log(this.equip1);
   }
 
+
   public async salvaCurso() {
-
     let os: any = this.os;
-
-
     this.carregando = true;
     if (this.equip1) {
       os.equipeTecnica.push('Criar link');
@@ -243,19 +299,26 @@ export class EditarCursoModalComponent {
     if (this.equip4) {
       os.equipeTecnica.push('Emitir Relatório Final');
     }
+    if (this.equipeJuridica) {
+      os.equipeJuridica.push(true);
+      this.Trvisivel = true;
+    }else {
+      os.equipeJuridica.push(false);
+      this.Trvisivel = false;
+    }
     os.modalidade = os.modalidade.length > 0 ? os.modalidade : 'NENHUM';
-    os.demanda = os.demanda.length > 0 ? os.demanda : 'OUTRA_DEMANDA';
+    os.demanda = os.demanda.length > 0 ? os.demanda : 'OUTRA DEMANDA';
     if (this.trId != null) {
       os.idTr = this.trId;
     }
     if (this.isEditando) {
       var res = await this.http
-        .put(this.apiUrl + '/os/' + this.idCurso, os)
+        .put(this.apiUrl+'../os/' + this.idCurso, os)
         .toPromise();
       this.sendNovaOsMessage(this.idCurso, os.tituloEvento, 'OS');
     } else {
       var res = await this.http
-        .post(this.apiUrl + '/os', os)
+        .post(this.apiUrl+'../os', os)
         .toPromise();
       this.sendNovaOsMessage(this.idCurso, os.tituloEvento, 'OS');
     }
@@ -278,15 +341,15 @@ export class EditarCursoModalComponent {
     this.salvaCurso();
     if (this.trId != null) {
       var res = await this.http
-        .put(this.apiUrl + '/tr/' + this.trId, tr)
+        .put(this.apiUrl+'../tr/' + this.trId, tr)
         .toPromise();
-      this.sendNovaOsMessage(tr.id, tr.esc, 'TR');
-    } else {
+        this.sendNovaOsMessage(tr.id, tr.esc, 'TR');
+      } else {
       var res = await this.http
-        .post(this.apiUrl + '/tr', tr)
+        .post(this.apiUrl+'../tr', tr)
         .toPromise();
-      this.sendNovaOsMessage(tr.id, tr.esc, 'TR');
-    }
+        this.sendNovaOsMessage(tr.id, tr.esc, 'TR');
+      }
     await setTimeout(() => {
       this.carregando = false;
     }, 350);
@@ -298,8 +361,10 @@ export class EditarCursoModalComponent {
   }
 
   os = {
+
+    datasHorarios: [ { data: '', horaInicio: '', horaFim: ''}],
     idTr: '',
-    id: '0',
+    id: '',
     unidadeSolicitante: '',
     tituloEvento: '',
     dataInicio: '', // Should be a valid date format (e.g., '2024-10-06')
@@ -310,89 +375,88 @@ export class EditarCursoModalComponent {
     modalidade: 'NENHUM', // Dropdown with predefined options
     cargaHoraria: '', // Integer value
     demanda: '', // Dropdown with predefined options
-    coordenadorGeral: 'Marco José da Silva', // Dropdown with predefined options
+    coordenadorGeral: 'Marcos José da Silva', // Dropdown with predefined options
     coordenadorApoioInstitucional: 'Carlos Arantes', // Dropdown with predefined options
-    coordenadorAcaoCapacitacao: 'Selecionar',
-    coordenacaoApoioAcao: 'Selecionar',
-    coordenacaoApoioOperacional: 'Selecionar',
+    coordenadorAcaoCapacitacao: '',
+    coordenacaoApoioAcao: [''],
+    coordenacaoApoioOperacional: [''],
     equipeTecnica: [''], // Array of strings
-    equipeJuridica: "Selecionar", // Array of strings
+    equipeJuridica: [''], // Array of strings
     observacao: '',
     osElaboradaPor: '',
     local: '',
     publicoAlvo: '',
     status: 'AGENDADO',
+    publicoPrevisto: '',
+    objetivo:'',
+    publicoAlvomr: '',
+    linkinscricao: '',
     tr: {}, // Assuming tr, mr, and rf are objects
     mr: {},
     rf: {},
+    
   };
 
-  isOsValid(os: any): boolean {
-    // Helper function to check if a string is valid
-    const isValidString = (str: string): boolean => {
-      return str !== null &&
-        typeof str === 'string' &&
-        str.trim().length >= 3 &&
-        str !== "Selecionar";
-    };
+atrib: any = { descricao: 'Nome do Responsável/Unidade',
+  presidente: 'Sérgio Ricardo de Almeida: Validar a Ação Educacional; Assinar ofícios para Prefeitos e Secretários de Saúde e demais Autoridades...',
+  gabinetePresidencia: 'Paula Pietro: Acompanhar a execução da Ação Educacional...', 
+  secretariaGeral: 'Nilson Fernando Gomes Bezerra: Para conhecimento e participação', 
+  gabineteConselheiro: 'Antônio Joaquim: Para conhecimento e participação', 
+  abineteConselheiroValter: 'Valter Albano: Para conhecimento e participação', 
+  conselheiroSupervisor: 'Waldir Júlio Teis: Para conhecimento e participação', 
+  gabineteConselheiroNovelli: 'José Carlos Novelli: Para conhecimento e participação', 
+  gabineteConselheiroDomingos: 'Domingos Neto: Para conhecimento e participação', 
+  procuradorGeral: 'Alisson Carvalho de Alencar: Para conhecimento e participação', 
+  consultoriaJuridicaGeral: 'Grhegory Paiva Maia: Para conhecimento', 
+  gabineteGuilherme: 'Gabinete do Guilherme: Encaminhar Termo de Referência da Ação', 
+  observacao: ''
+}
 
-    // Check if required string properties are valid
-    const requiredStringProps = [
-      'idTr',
-      'unidadeSolicitante',
-      'tituloEvento',
-      'modalidade',
-      'demanda',
-      'coordenadorGeral',
-      'coordenadorApoioInstitucional',
-      'coordenadorAcaoCapacitacao',
-      'coordenacaoApoioAcao',
-      'coordenacaoApoioOperacional',
-      'osElaboradaPor',
-      'local',
-      'publicoAlvo'
-    ];
+// Define a propriedade com as opções para o <select>
+selectsCoordenacaoApoio:string[] = ['Alexandre Viegas da Silva',
+  'Dilce Meire Nunes Medeiros Santos',
+  'Fabiano Mrozkowski',
+  'Karinny Emanuelle Campos Muzzi de Oliveira',
+  'Oscar da Costa Ribeiro Neto',
+  'Kleber Batista Souza Andrade'];
 
-    for (const prop of requiredStringProps) {
-      if (!isValidString(os[prop])) {
-        return false;
-      }
-    }
 
-    // Check if date and time properties are valid (basic format check)
-    const dateProps = ['dataInicio', 'dataFim'];
-    for (const prop of dateProps) {
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(os[prop])) {
-        return false;
-      }
-    }
+// Define a propriedade com as opções para o <select>
+opcoesOperacional:string[] = ['Evanildes Maria dos Reis',
+  'Jaques Marques de Moraes',
+  'Fabiano Mrozkowski',
+  'José de Arruda Campos Filho',
+  'Josenei Souza da Silva',
+  'Júlio Aramito Leal',
+  'Marcos Rodrigues da Silva',
+  'Sinaila Paranhos Quida'];
 
-    const timeProps = ['horaInicio', 'horaFim'];
-    for (const prop of timeProps) {
-      if (!/^\d{2}:\d{2}$/.test(os[prop])) {
-        return false;
-      }
-    }
 
-    // Check if numeric properties are valid
-    const numericProps = ['quantidadeParticipantes', 'cargaHoraria'];
-    for (const prop of numericProps) {
-      if (isNaN(Number(os[prop]))) {
-        return false;
-      }
-    }
+// Função para adicionar uma nova entrada na seção "Apoio Coordenadoria"
+adicionarCoordenacaoApoio() {
+  this.os.coordenacaoApoioAcao.push('');
+}
 
-    // Check if array properties are valid (not empty and contain valid strings)
-    const arrayProps = ['equipeTecnica', 'equipeJuridica'];
-    for (const prop of arrayProps) {
-      if (!Array.isArray(os[prop]) || os[prop].length === 0 || !os[prop].every(isValidString)) {
-        return false;
-      }
-    }
-
-    // All checks passed
-    return true;
+// Função para remover uma entrada específica na seção "Apoio Coordenadoria"
+removerCoordenacaoApoio(index: number) {
+  if (this.os.coordenacaoApoioAcao.length > 1) {
+    this.os.coordenacaoApoioAcao.splice(index, 1);
   }
+}
+
+// Função para adicionar uma nova entrada na seção "Coordenação de Apoio Operacional"
+adicionarCoordenacaoOperacional() {
+  this.os.coordenacaoApoioOperacional.push('');
+}
+
+// Função para remover uma entrada específica na seção "Coordenação de Apoio Operacional"
+removerCoordenacaoOperacional(index: number) {
+  if (this.os.coordenacaoApoioOperacional.length > 1) {
+    this.os.coordenacaoApoioOperacional.splice(index, 1);
+  }
+}
+
+
 
   @ViewChild('dataToExport', { static: false })
   public dataToExport!: ElementRef;
@@ -400,50 +464,48 @@ export class EditarCursoModalComponent {
 
   pdfUrl = environment.apiUrl;
 
-  isDisabled = true;
-
   generateAndDownloadPdf(doc: any, tipo: string) {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
-    doc.equipeJuridica = [doc.equipeJuridica]
-    if (tipo == 'os') {
+
+    if(tipo == 'os'){
       this.http
-        .post(this.pdfUrl + '/gerarPdf/' + 'os', doc, {
-          headers,
-          responseType: 'blob',
-        })
-        .subscribe(
-          (response: Blob) => {
-            console.log('teste')
-            const blob = new Blob([response], { type: 'application/pdf' });
-            const filename = 'relatorio.pdf'; // Customize the filename if needed
-            saveAs(blob, filename);
-          },
-          (error) => {
-            console.error('Error generating PDF:', error);
-          }
-        );
+      .post(this.pdfUrl+'/gerarPdf/' + 'os', doc, {
+        headers,
+        responseType: 'blob',
+      })
+      .subscribe(
+        (response: Blob) => {
+          console.log('teste')
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const filename = 'relatorio.pdf'; // Customize the filename if needed
+          saveAs(blob, filename);
+        },
+        (error) => {
+          console.error('Error generating PDF:', error);
+        }
+      );
     } else {
       this.http
-        .post(this.pdfUrl + '/gerarPdf2/' + 'os2', doc, {
-          headers,
-          responseType: 'blob',
-        })
-        .subscribe(
-          (response: Blob) => {
-            console.log('teste')
-            const blob = new Blob([response], { type: 'application/pdf' });
-            const filename = 'relatorio.pdf'; // Customize the filename if needed
+      .post(this.pdfUrl+'/gerarPdf2/' + 'os2', doc, {
+        headers,
+        responseType: 'blob',
+      })
+      .subscribe(
+        (response: Blob) => {
+          console.log('teste')
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const filename = 'relatorio.pdf'; // Customize the filename if needed
 
-            saveAs(blob, filename);
-          },
-          (error) => {
-            console.error('Error generating PDF:', error);
-          }
-        );
+          saveAs(blob, filename);
+  },
+        (error) => {
+          console.error('Error generating PDF:', error);
+        }
+      );
     }
-
+   
   }
 
   title = 'export-pdf';
@@ -452,7 +514,6 @@ export class EditarCursoModalComponent {
     this.imprimir = true;
 
     this.exibirOs = true;
-    this.exibirTr = true;
 
     this.generateAndDownloadPdf(fonte == 'os' ? this.os : this.termoRecisao, fonte);
     setTimeout(() => {
@@ -513,84 +574,18 @@ export class EditarCursoModalComponent {
     this.router.navigateByUrl('app-editar-curso-modal');
   }
 
-
-  currentUser: any = {
-    isCoordenador: true,
-    isEstagiario: false,
+  adicionarDataHorario() {
+    this.os.datasHorarios.push({ data: '', horaInicio: '', horaFim: '' });
   }
 
+  adicionarPrimeiraData() {
+    this.os.datasHorarios.push({ data: '21-03-2024', horaInicio: '10:30', horaFim: '19:30' });
+  }
 
-  //tttt
-  coordCapacitacao: string[] = ["Selecionar", "Clenilda Poletto",
-    "Maarina Spinelli", "Clenilda Poletto & Marina Spinelli"
-  ];
-
-  equipeJuridica: string[] = ["Selecionar", "Erika Maria Curvo Pinho Campos",
-    "Maira de Campos Borges", "Erika Maria Curvo Pinho Campos & Maira de Campos Borges"
-  ];
-
-  coordApoioAcao: string[] = [
-    "Selecionar", "Agripino Bonilha Neto",
-    "Alexandre Viegas a Silva",
-    "Cristiane Maria Moreira da Silva de Oliveira",
-    "Diana Catarina Souza",
-    "Dilce Meire Nunes Medeiros",
-    "Elen Wannessa de Pieri",
-    "Erika Maria Curvo Pinho Campos",
-    "Evanildes Maria dos Reis",
-    "Fabiano Mrozkowski",
-    "Giliane Rondon Gracioso",
-    "Isadora Neiva Asevedo Bastos",
-    "Jaques Marques de Moraes",
-    "José de Arruda Campos Filho",
-    "Josenei Souza da Silva",
-    "Júlio Aramito Leal",
-    "Karinny Emanuelle Campos Muzzi de Oliveira",
-    "Kleber Batista Souza Andrade",
-    "Maira de Campos Borges",
-    "Marcial de Carvalho Júnior",
-    "Marcondes Rufino Simplício Filho",
-    "Marcos Rodrigues da Silva",
-    "Maria Carolina Aldem Vianna Lino",
-    "Oscar da Costa Ribeiro Neto",
-    "Pâmela Taires Bonate de Almeida",
-    "Romar José de Oliveira",
-    "Sinaila Paranhos Quida",
-    "Vanessa Aparecida Oliveira Abrao Moraes",
-    "Taisa Tavares do Nascimento",
-    "Thayssa Conceição Silva"
-  ];
-  coordApoioOperacional: string[] = [
-    "Selecionar",
-    "Agripino Bonilha Neto",
-    "Alexandre Viegas a Silva",
-    "Cristiane Maria Moreira da Silva de Oliveira",
-    "Diana Catarina Souza",
-    "Dilce Meire Nunes Medeiros",
-    "Elen Wannessa de Pieri",
-    "Erika Maria Curvo Pinho Campos",
-    "Evanildes Maria dos Reis",
-    "Fabiano Mrozkowski",
-    "Giliane Rondon Gracioso",
-    "Isadora Neiva Asevedo Bastos",
-    "Jaques Marques de Moraes",
-    "José de Arruda Campos Filho",
-    "Josenei Souza da Silva",
-    "Júlio Aramito Leal",
-    "Karinny Emanuelle Campos Muzzi de Oliveira",
-    "Kleber Batista Souza Andrade",
-    "Maira de Campos Borges",
-    "Marcial de Carvalho Júnior",
-    "Marcondes Rufino Simplício Filho",
-    "Marcos Rodrigues da Silva",
-    "Maria Carolina Aldem Vianna Lino",
-    "Oscar da Costa Ribeiro Neto",
-    "Pâmela Taires Bonate de Almeida",
-    "Romar José de Oliveira",
-    "Sinaila Paranhos Quida",
-    "Vanessa Aparecida Oliveira Abrao Moraes",
-    "Taisa Tavares do Nascimento",
-    "Thayssa Conceição Silva"
-  ];
+  removerDataHorario(index: number) {
+    if (this.os.datasHorarios.length > 1) {
+      this.os.datasHorarios.splice(index, 1);
+    }
+  }
 
 }

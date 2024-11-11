@@ -1,45 +1,46 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, delay, Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
-import { environment } from './enviroment';
-import { Router } from '@angular/router';
+import { environment } from './enviroment'
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-  constructor(private http: HttpClient, public cookieService: CookieService, private router: Router) { }
-  private erroLoginSubject = new BehaviorSubject<boolean>(this.cookieService.get("erroLoginSubject") != null && this.cookieService.get("erroLoginSubject") != undefined && this.cookieService.get("erroLoginSubject") === "true");
-  public erroLogin$: Observable<boolean> = this.erroLoginSubject.asObservable();
+  get(arg0: string) {
+    throw new Error('Method not implemented.');
+  }
+  modalCred: boolean = false;
+  constructor(private http: HttpClient, private cookieService: CookieService) {}
 
-  private isLoggedInSubject = new BehaviorSubject<boolean>(this.cookieService.get("isLoggedIn") != null && this.cookieService.get("isLoggedIn") != undefined && this.cookieService.get("isLoggedIn") === "true");
+  private isLoggedInSubject = new BehaviorSubject<boolean>(true);
   isLoggedIn$: Observable<boolean> = this.isLoggedInSubject.asObservable();
 
-  private loggedUserSubject = new BehaviorSubject<string>(this.cookieService.get('loggedUser'));
-  isLoggedUser$: Observable<string> = this.loggedUserSubject.asObservable();
+  private isLoggedUserSubject = new BehaviorSubject<string>('');
+  isLoggedUser$: Observable<string> = this.isLoggedUserSubject.asObservable();
 
   apiUrl = environment.jsonServerUrl;
 
   async login(credentials: any): Promise<void> {
     try {
-      const usersResponse = await this.http.get<any[]>(this.apiUrl + '/users?login=' + credentials.login).toPromise();
+      const usersResponse = await this.http
+        .get<any[]>(`${this.apiUrl}users?login=${credentials.login}`)
+        .toPromise();
 
       if (usersResponse) {
-        const users = usersResponse;
+        const users: any[] = usersResponse;
         const user = users.find(u => u.login === credentials.login);
 
         if (user && user.password === credentials.password) {
           this.isLoggedInSubject.next(true);
-          this.loggedUserSubject.next(user.login);
-          // Store login state persistently (choose localStorage or cookies)
-          this.cookieService.set('isLoggedIn', 'true'); // Using cookies for this example
-          this.cookieService.set('loggedUser', user.login);
+          this.isLoggedUserSubject.next(credentials.login);
+          localStorage.setItem('isLoggedIn', 'true');
+          this.cookieService.set('isLoggedIn', 'true');
+          this.cookieService.set('loggedUser', credentials.login);
+          localStorage.setItem('loggedUser', credentials.login);
         } else {
           console.error('Invalid credentials');
-          this.erroLoginSubject.next(true);
-          this.isLoggedInSubject.next(false);
-          this.loggedUserSubject.next(user.login);
         }
       } else {
         console.error('No users found');
@@ -48,62 +49,29 @@ export class AuthService {
       console.error('Error fetching user data:', error);
     }
   }
-
-  async getUser(login: string): Promise<any> {
-    try {
-      const usersResponse = await this.http.get<any[]>(this.apiUrl + '/users?login=' + login).toPromise();
-
-      if (usersResponse) {
-        const users = usersResponse;
-        const user = users.find(u => u.login === login);
-
-        if (user) {
-          return user;
-        } else {
-          return undefined;
-        }
-      } else {
-        console.error('No users found');
-        return undefined;
-
-      }
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-      return undefined;
-    }
-  }
-
-  async save(user: any): Promise<void> {
-    try {
-      const usersResponse = await this.http.put<any[]>(this.apiUrl + '/users/' + user.id, user).toPromise();
-
-      if (usersResponse) {
-
-        if (usersResponse) {
-        } else {
-        }
-      } else {
-        console.error('No users found');
-
-      }
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-    }
-  }
-
 
   logout(): void {
     this.isLoggedInSubject.next(false);
-    this.loggedUserSubject.next('');
-    this.cookieService.delete('isLoggedIn');
-    this.cookieService.delete('loggedUser');
-    delay(100)
-
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('loggedUser');
   }
 
-  // Check login status on app initialization
   init(): void {
-    const isLoggedIn = this.cookieService.get('isLoggedIn') === 'true';
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     this.isLoggedInSubject.next(isLoggedIn);
+
+  }
+}
+
+export class ProfileService {
+  private uploadUrl = 'http://localhost:3000/upload';
+
+  constructor(private http: HttpClient) {}
+
+  uploadProfilePic(file: File) {
+    const formData = new FormData();
+    formData.append('profile-pic', file);
+
+    return this.http.post<{ filePath: string }>(this.uploadUrl, formData);
   }
 }

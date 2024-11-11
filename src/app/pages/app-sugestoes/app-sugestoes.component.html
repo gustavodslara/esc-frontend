@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <h1>Mural de Sugestões</h1>
+    <link rel="stylesheet" href="../app-sugestoes/app-sugestoes.component.scss">
+    <link rel="" href="">
+</head>
+<body style="margin-top: 500px;">
+    <header>
+        <h1>Mural de Sugestões</h1>
+        <button id="btnNovaSugestao">+</button>
+    </header>
+
+    <section id="muralSugestoes">
+
+    </section>
+
+    <div id="modalSugestao" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Nova Sugestão</h2>
+            <form id="formSugestao">
+                <label for="nome">Nome (Opcional):</label>
+                <input type="text" id="nome" name="nome">
+
+                <label for="sugestao">Sugestão:</label>
+                <textarea id="sugestao" name="sugestao" rows="4" required></textarea>
+
+                <label for="motivo">Motivo da Sugestão:</label>
+                <textarea id="motivo" name="motivo" rows="3" required></textarea>
+
+                <label for="atribuir">A quem se atribui (Opcional):</label>
+                <input type="text" id="atribuir" name="atribuir">
+
+                <button type="submit">Postar</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

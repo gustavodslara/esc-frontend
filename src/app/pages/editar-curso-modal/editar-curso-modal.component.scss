@@ -9,7 +9,7 @@ header {
 }
 
 .centraBoxCurso {
-  margin-left: 120px;
+  margin-left: 100px;
   align-self: center;
 }
 
@@ -62,6 +62,11 @@ h1 {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
+  margin-left: 150px;
+}
+
+.menuVertical {
+  margin-right: 100px;
 }
 
 .row {
@@ -138,6 +143,7 @@ h1 {
   flex-direction: row;
   margin: 0px;
   padding: 0px;
+
   font-size: medium;
 }
 
@@ -157,12 +163,14 @@ input[type="checkbox"] {
 .container {
   display: flex;
   justify-content: center;
+  
 }
 
 .lateral {
   flex: 1;
-  min-width: 150px;
-  max-width: 150px;
+  min-width: 100px;
+  max-width: 100px;
+  margin-right: 250px;
   /* Adicione outras estilizações necessárias para o menu lateral */
 }
 
