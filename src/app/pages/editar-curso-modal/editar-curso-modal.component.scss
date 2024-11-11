@@ -1,0 +1,193 @@
+* {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+}
+
+header {
+  background-color: #007bff;
+  padding: 20px 0;
+}
+
+.centraBoxCurso {
+  margin-left: 120px;
+  align-self: center;
+}
+
+input,.input{
+  z-index: 999999999!important;
+}
+
+img.logoescola {
+  margin-left: 240px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  width: 50%;
+  height: 50%;
+}
+
+header nav ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+}
+
+header nav ul li {
+  margin: 0 15px;
+}
+
+header nav ul li a {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+header nav ul li a:hover {
+  text-decoration: underline;
+}
+
+main {
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333333;
+}
+
+.info-table {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+
+  margin-bottom: 15px;
+}
+
+.half-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.label {
+  flex: 3;
+  font-weight: bold;
+  padding: 10px;
+  max-width: 200px;
+  margin-left: 20px;
+  padding-right: 20px;
+}
+
+.input {
+  flex: 3;
+  padding: 0;
+  padding-right: 26px;
+}
+
+.input input,
+.input select,
+.input textarea {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.input label {
+  display: flex;
+  margin-bottom: 5px;
+}
+
+.headerColor {
+  background-color: #0056b3;
+}
+
+.padzero {
+  padding-bottom: 2;
+}
+.marginzero {
+  margin-bottom: 2;
+}
+
+.espacoImprimir {
+  padding-top: 11rem;
+}
+
+.distancialogo {
+  padding-bottom: 1rem;
+}
+
+.padbtn {
+  margin: 10px;
+  background-color: #0056b3;
+}
+
+.organizarChecks {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row;
+  margin: 0px;
+  padding: 0px;
+  font-size: medium;
+}
+
+.bluebtnExcluir {
+  background-color: #0056b3;
+  color: white;
+  border-radius: 5px;
+  border: none;
+  margin-bottom: 5px;
+  padding: 10px 20px;
+}
+
+input[type="checkbox"] {
+  margin-right: 5px; /* Ajuste o valor conforme necessário */
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+}
+
+.lateral {
+  flex: 1;
+  min-width: 150px;
+  max-width: 150px;
+  /* Adicione outras estilizações necessárias para o menu lateral */
+}
+
+.marginNav {
+  margin-top: 120px!important;
+}
+
+.info-table {
+  flex: 3;
+  padding-left: 0;
+  /* Adicione outras estilizações necessárias para a tabela de informações */
+}
+
+// menu
+
+.done {
+  background-color: rgba(59, 204, 59, 0.521);
+}
+.current {
+  background-color: rgba(175, 157, 55, 0.521);
+}
+.none {
+  background-color: rgba(56, 56, 56, 0.521);
+}
+
+.goOss:hover {
+  cursor: pointer;
+}

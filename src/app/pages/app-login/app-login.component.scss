@@ -1,0 +1,105 @@
+$primary-color: #007bff;
+$background-color: #f0f8ff;
+
+
+
+/* Centraliza a caixa de login */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f8f9fa; /* Fundo claro */
+  padding: 20px;
+}
+
+/* Caixa principal de login */
+.login-box {
+  background-color: white;
+  border-radius: 10px;
+  padding: 30px;
+  max-width: 450px;
+  width: 100%;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Estiliza o logo */
+.logo {
+  max-width: 250px;
+  margin-bottom: 20px;
+}
+
+/* Título de login */
+.login-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Estiliza o formulário */
+.login-form {
+  width: 100%;
+}
+
+/* Estiliza o grupo de formulário */
+.form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+/* Estiliza o label dos inputs */
+.form-label {
+  font-size: 14px;
+  color: #555;
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* Estiliza os inputs */
+.form-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+  transition: border-color 0.3s;
+}
+
+/* Efeito de foco nos inputs */
+.form-input:focus {
+  border-color:#0056b3;
+  outline: none;
+}
+
+/* Estiliza o botão de envio */
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  background-color: #0056b3;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+/* Estilo responsivo */
+@media (max-width: 480px) {
+  .login-box {
+    padding: 20px;
+  }
+  
+  .login-title {
+    font-size: 20px;
+  }
+}
+
+

@@ -1,0 +1,25 @@
+<app-navbar></app-navbar>
+<div class="container" style="margin-top: 100px;">
+  <h1>Atualizar Perfil</h1>
+  <p style="font-size: 30px;">{{ isLoggedUser }}</p>
+  <form>
+    <div class="form-group">
+      <label for="profile-pic">Foto de Perfil</label>
+      <div class="profile-pic-container">
+        <img [src]="user.img" alt="Foto de Perfil Atual" id="current-profile-pic" style="display: flex;border-radius: 90%; width: 25%; height: 25%; padding-top: 10px; padding-bottom: 10px;">
+        <input type="file" id="profile-pic" name="profile-pic" accept="image/*" (change)="onProfilePicChange($event)"  >
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="username">Nome de Usuário</label>
+      <input type="text" id="username" name="username" required [(ngModel)]="user.login">
+    </div>
+    <div class="form-group">
+      <label for="password">Senha</label>
+      <input type="password" id="password" name="password" required  [(ngModel)]="user.password">
+    </div>
+    <p style="color: rgb(15, 184, 15)" *ngIf="salvo">Alterações Salvas!</p>
+    <p style="color: rgb(184, 15, 15)" *ngIf="mudeSenha">Altere sua senha padrão!</p>
+      <button type="submit" (click)="salvar()">Salvar</button>
+  </form>
+</div>

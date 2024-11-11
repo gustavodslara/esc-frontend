@@ -1,0 +1,512 @@
+<app-navbar
+  style="position: fixed;min-height: 100px; min-width: 100%; z-index:9999999999999999999999999999999999999!important;"></app-navbar>
+<main id="dataToExport" #dataToExport>
+  <img class="distancialogo" src="logo.jpeg" *ngIf="imprimir" style="max-width: 100%" />
+  <div class="container" [ngClass]="!imprimir ? 'marginNav' : 'no'">
+    <div class="lateral" *ngIf="!imprimir">
+      <div class="lateral" *ngIf="isEditando">
+
+        <div>
+
+          <div class="col-6" style="display: flex; position: fixed; left: 20px">
+            <div class="contact-list" style="min-height: 600px; overflow-y: auto">
+              <div class="menuVertical">
+                <p *ngIf="isEditando" style="display: flex;">Status:</p>
+                <select *ngIf="isEditando" style="max-width: 180px; margin-bottom: 10px" class="form-select"
+                  aria-label="Default select example" [(ngModel)]="os.status">
+                  <option value="agendado">Agendado</option>
+                  <option value="andamento">Em andamento</option>
+                  <option value="finalizado">Finalizado</option>
+                </select>
+              </div>
+              <div class="card mb-3 goOss" (click)="
+                  proximaPaginaOs();
+                  exibirTr = false;
+                  exibirOs = true;
+                  faseAtual = 0
+                ">
+                <div class="card-header" style="
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    font-weight: bold;
+                    min-width: 60px;
+                    position: block;
+                  ">
+                  <i class="bi bi-file-earmark-text">OS</i>
+                </div>
+                <div *ngIf="faseAtual == 0" class="card-body" style="background-color: lightgreen"></div>
+                <div *ngIf="faseAtual != 0" class="card-body"></div>
+              </div>
+              <div class="card mb-3 goOss" (click)="
+                  proximaPaginaOs();
+                  exibirTr = true;
+                  exibirOs = false;
+                  faseAtual = 1
+                " *ngIf="exibirMenuTR">
+                <div class="card-header" style="
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    font-weight: bold;
+                  ">
+                  <i class="bi bi-file-earmark-text">TR</i>
+                  <div></div>
+                </div>
+                <div *ngIf="faseAtual == 1" class="card-body" style="background-color: lightgreen"></div>
+                <div *ngIf="faseAtual != 1" class="card-body"></div>
+              </div>
+              <div class="card mb-3 goOss" *ngIf="exibirMenuMR">
+                <div class="card-header" style="
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    font-weight: bold;
+                  ">
+                  <i class="bi bi-file-earmark-text">MR</i>
+                </div>
+                <div *ngIf="faseAtual == 2" class="card-body" style="background-color: lightgreen"></div>
+                <div *ngIf="faseAtual != 2" class="card-body"></div>
+              </div>
+              <div class="card mb-3 goOss" *ngIf="exibirMenuRF">
+                <div class="card-header" style="
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    font-weight: bold;
+                  ">
+                  <i class="bi bi-file-earmark-text">RF</i>
+                </div>
+                <div *ngIf="faseAtual == 3" class="card-body" style="background-color: lightgreen"></div>
+                <div *ngIf="faseAtual != 3" class="card-body"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="carregando"
+      style="position: absolute; z-index: 99999999999;background-color: rgba(255, 255, 255,0.5)!important; height: 100%; width: 100%;">
+      <div *ngIf="carregando" style="top: 50%; left: 50%; position: absolute; z-index: 9999999999999; "
+        class="spinner-border" s role="status"></div>
+    </div>
+
+    <div *ngIf="!isEditando">
+      <div class="info-table" class="centraBoxCurso">
+        <h1>Curso N.º{{ os.id }}/2024</h1>
+        <div class="row marginzero">
+          <div class="label padzero">Ação Educacional:</div>
+          <div class="input padzero">
+            <textarea [(ngModel)]="os.tituloEvento" type="text" id="tituloEvento"></textarea>
+          </div>
+        </div>
+        <div class="row" class="row marginzero">
+          <div class="label">Modalidade:</div>
+          <div class="input" class="input padzero">
+            <select [(ngModel)]="os.modalidade" id="modalidade">
+              <option value="PRESENCIAL">Presencial</option>
+              <option value="ONLINE">Online</option>
+              <option value="NENHUM">Selecione a modalidade</option>
+            </select>
+          </div>
+        </div>
+        <div class="row half-row marginzero">
+          <div class="label" class="label padzero">Data de Início:</div>
+          <div class="input" class="input padzero">
+            <input [disabled]="isDisabled" [(ngModel)]="os.dataInicio" type="date" id="dataInicio" />
+          </div>
+          <br />
+        </div>
+        <div class="row half-row marginzero">
+          <div class="label" class="label padzero">Data de Finalização:</div>
+          <div class="input" class="input padzero">
+            <input [disabled]="isDisabled"  [(ngModel)]="os.dataFim" type="date" id="dataFinalizacao" />
+          </div>
+        </div>
+        <!-- <div class="row half-row marginzero">
+          <div class="label" class="label padzero">Horário de Início:</div>
+          <div class="input" class="input padzero">
+            <input [(ngModel)]="os.horaInicio" type="time" id="horarioInicio" />
+          </div>
+          <div class="label" class="label padzero">Horário de Término:</div>
+          <div class="input" class="input padzero">
+            <input [(ngModel)]="os.horaFim" type="time" id="horarioTermino" />
+          </div>
+        </div> -->
+      </div>
+      <div class="column" style="display: flex; width: 100%; justify-content: space-around">
+        <button class="btn btn-primary" style="margin-left: 100px; z-index: 999999;" [(ngModel)]="selectedEditStatus"
+        *ngIf="!isDisabled"
+          (click)="
+            selectedEditStatus = 'agendado';
+            newStatus();
+            salvaCurso();
+            scrollUp();
+            voltar()
+          ">
+          Confirmar
+        </button>
+        <button class="btn btn-danger" (click)="fechar()">Cancelar</button>
+      </div>
+    </div>
+
+    <div *ngIf="isEditando">
+      <div *ngIf="exibirOs" class="info-table">
+        <h1>Ordem de Serviço N.º{{ os.id }}/2024</h1>
+
+        <div class="row marginzero">
+          <div class="label padzero">Unidade Solicitante:</div>
+          <div class="input padzero">
+            <input [disabled]="isDisabled"  [(ngModel)]="os.unidadeSolicitante" type="text" id="unidadeSolicitante" />
+          </div>
+        </div>
+        <div class="row marginzero">
+          <div class="label padzero">Ação Educacional:</div>
+          <div class="input padzero">
+            <textarea [disabled]="isDisabled"  [(ngModel)]="os.tituloEvento" type="text" id="tituloEvento"></textarea>
+          </div>
+        </div>
+        <div class="row half-row marginzero">
+          <div class="label" class="label padzero">Data de Início:</div>
+          <div class="input" class="input padzero">
+            <input [disabled]="isDisabled"  [(ngModel)]="os.dataInicio" type="date" id="dataInicio" />
+          </div>
+          <br />
+        </div>
+        <div class="row half-row marginzero">
+          <div class="label" class="label padzero">Data de Finalização:</div>
+          <div class="input" class="input padzero">
+            <input  [disabled]="isDisabled" [(ngModel)]="os.dataFim" type="date" id="dataFinalizacao" />
+          </div>
+        </div>
+        <div class="row half-row marginzero">
+          <div class="label" class="label padzero">Horário de Início:</div>
+          <div class="input" class="input padzero">
+            <input [disabled]="isDisabled"  [(ngModel)]="os.horaInicio" type="time" id="horarioInicio" />
+          </div>
+          <div class="label" class="label padzero">Horário de Término:</div>
+          <div class="input" class="input padzero">
+            <input  [disabled]="isDisabled" [(ngModel)]="os.horaFim" type="time" id="horarioTermino" />
+          </div>
+        </div>
+        <div *ngIf="isEditando" class="row marginzero">
+          <div class="label" class="label padzero">
+            Quantidade de Participantes:
+          </div>
+          <div class="input" class="input padzero">
+            <input [disabled]="isDisabled"  [(ngModel)]="os.quantidadeParticipantes" type="number" id="quantidadeParticipantes" />
+          </div>
+        </div>
+        <div *ngIf="isEditando" class="row marginzero">
+          <div class="label" class="label padzero">Carga Horária:</div>
+          <div class="input" class="input padzero">
+            <input  [disabled]="isDisabled" [(ngModel)]="os.cargaHoraria" type="number" id="cargaHoraria" />
+          </div>
+        </div>
+        <div class="row" class="row marginzero">
+          <div class="label">Modalidade:</div>
+          <div class="input" class="input padzero">
+            <select [disabled]="isDisabled"  [(ngModel)]="os.modalidade" id="modalidade">
+              <option value="PRESENCIAL">Presencial</option>
+              <option value="ONLINE">Online</option>
+              <option value="NENHUM">Selecione a modalidade</option>
+            </select>
+          </div>
+        </div>
+        <div class="row" class="row marginzero">
+          <div class="label" class="label padzero">Demanda:</div>
+          <div class="input" class="input padzero">
+            <select [disabled]="isDisabled"  [(ngModel)]="os.demanda" id="demanda">
+              <option value="OUTRA_DEMANDA">Outra Demanda</option>
+              <option value="CAPACITACAO">Capacitação</option>
+            </select>
+          </div>
+        </div>
+        <div class="row" class="row marginzero">
+          <div class="label" class="label padzero">Coordenador Geral:</div>
+          <div class="input" class="input padzero">
+            <input disabled="true" [(ngModel)]="os.coordenadorGeral" type="text" id="coordenadorGeral"
+              value="Marcos José da Silva" rows="1" />
+          </div>
+        </div>
+        <div class="row" class="row marginzero">
+          <div class="label" class="label padzero">
+            Coordenadoria de Apoio Institucional:
+          </div>
+          <div class="input" class="input padzero">
+            <input disabled="true" [(ngModel)]="os.coordenadorApoioInstitucional" type="text"
+              id="coordenadoriaApoioInstitucional" value="Carlos Arantes" />
+          </div>
+        </div>
+        <div class="row" class="row marginzero">
+          <div class="label" class="label padzero">
+            Coordenadoria de Capacitação:
+          </div>
+          <div class="input" class="input padzero">
+            <select  [disabled]="isDisabled"  [(ngModel)]="os.coordenadorAcaoCapacitacao" id="coordenadoriaCapacitacao">
+              <option *ngFor="let coordenacao of coordCapacitacao" [value]="coordenacao">{{ coordenacao }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="row marginzero">
+          <div class="label padzero">
+            Coordenação de Apoio da Ação:
+          </div>
+          <div class="input padzero">
+            <select  [disabled]="isDisabled"  [(ngModel)]="os.coordenacaoApoioAcao">
+              <option *ngFor="let coordenacao of coordApoioAcao" [value]="coordenacao">{{ coordenacao }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row marginzero">
+          <div class="label padzero">
+            Coordenação de Apoio Operacional:
+          </div>
+          <div class="input padzero">
+            <select  [disabled]="isDisabled"  [(ngModel)]="os.coordenacaoApoioOperacional">
+              <option *ngFor="let coordenacao of coordApoioOperacional" [value]="coordenacao">{{ coordenacao }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="row" [ngClass]="imprimir ? 'espacoImprimir' : ''">
+          <div class="label" class="label padzero">Equipe Técnica:</div>
+          <div class="organizarChecks" style="
+              display: flex;
+              justify-content: space-between;
+              padding-top: 5px;
+              padding-bottom: 5px;
+            ">
+            <label class="organizarChecks"><input  [disabled]="isDisabled"  [(ngModel)]="equip1" type="checkbox" (click)="tess()"
+                id="equip1" />Criar link</label>
+            <label class="organizarChecks"><input [disabled]="isDisabled"  [(ngModel)]="equip2" type="checkbox" id="equip2" />Elaborar e
+              encaminhar avaliação</label>
+            <label class="organizarChecks"><input [disabled]="isDisabled"  [(ngModel)]="equip3" type="checkbox" id="equip3" />Emitir
+              Certificado</label>
+            <label class="organizarChecks"><input  [disabled]="isDisabled" [(ngModel)]="equip4" type="checkbox" id="equip4" />Emitir Relatório
+              Final</label>
+          </div>
+        </div>
+        <div class="row marginzero">
+          <div class="label padzero">
+            Equipe Jurídica:
+          </div>
+          <div class="input padzero">
+            <select [disabled]="isDisabled"  [(ngModel)]="os.equipeJuridica">
+              <option *ngFor="let coordenacao of coordApoioOperacional" [value]="coordenacao">{{ coordenacao }}</option>
+            </select>
+          </div>
+        </div>
+        <!-- <div class="row" class="row marginzero">
+            <div class="input-group mb-3" *ngFor="let textField of os.equipeJuridica; let i = index">
+              <input type="text" class="form-control" [(ngModel)]="os.equipeJuridica[i]">
+              <button class="btn btn-danger" (click)="os.equipeJuridica.splice(i,1)">Remover</button>
+            </div>
+            <button class="btn btn-primary" (click)="addField()">Adicionar</button>
+        </div> -->
+        <div class="row" class="row marginzero">
+          <div class="label" class="label padzero">Observação:</div>
+          <div class="input" class="input padzero">
+            <textarea [disabled]="isDisabled"  [(ngModel)]="os.observacao" id="observacao" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="row" class="row marginzero">
+          <div class="label" class="label padzero">
+            Ordem de Serviço elaborada por:
+          </div>
+          <div class="input" class="input padzero">
+            <input [disabled]="isDisabled"  [(ngModel)]="os.osElaboradaPor" type="text" id="ordemServicoPor" />
+          </div>
+        </div>
+        <div class="row" class="row marginzero">
+          <div class="label" class="label padzero">Local:</div>
+          <div class="input" class="input padzero">
+            <input [disabled]="isDisabled"  [(ngModel)]="os.local" type="text" id="local" />
+          </div>
+        </div>
+        <div class="row" class="row marginzero">
+          <div class="label" class="label padzero">Público-alvo:</div>
+          <div class="input" class="input padzero">
+            <input [disabled]="isDisabled"  [(ngModel)]="os.publicoAlvo" type="text" id="publicoAlvo" />
+          </div>
+        </div>
+
+        <div class="column" style="display: flex; width: 100%; justify-content: space-around">
+          <button class="btn btn-outline" style="z-index: 999" *ngIf="!imprimir"
+            (click)="this.imprimir = true; salvarRelatorio2('os')">
+            Gerar Relatório
+          </button>
+
+          <button style="z-index: 999999" class="btn btn-primary" *ngIf="!imprimir && (user.isCoordenador || user.isEstagiario
+            )" (click)="
+              salvaCurso();
+              proximaPagina();
+              exibirMenuOS = false;
+              faseAtual = faseAtual + 1;
+              (!exibirTr);
+              (exibirOs)
+            ">
+            Confirmar
+          </button>
+          <button class="btn btn-danger" *ngIf="!imprimir" (click)="fechar()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+
+      <div class="info-table" *ngIf="exibirTr">
+        <h1>Termo de Referência Nº {{ os.id }}/2024</h1>
+        <div class="info-table">
+          <div class="row marginzero">
+            <div class="label padzero">ESC:</div>
+            <div class="input padzero">
+              <input [disabled]="isDisabled"  type="text" id="esc" name="esc" [(ngModel)]="termoRecisao.esc" />
+            </div>
+          </div>
+          <div class="row marginzero">
+            <div class="label padzero">Categoria de Investimento:</div>
+            <div class="input padzero">
+              <input [disabled]="isDisabled"  type="text" id="categoria" name="categoria" [(ngModel)]="termoRecisao.categoria" />
+            </div>
+          </div>
+          <div class="row" class="row marginzero">
+            <div class="label">Modalidade:</div>
+            <div class="input" class="input padzero">
+              <select [disabled]="isDisabled"  [(ngModel)]="termoRecisao.modalidade" id="modalidade">
+                <option value="PRESENCIAL">Presencial</option>
+                <option value="ONLINE">Online</option>
+                <option value="NENHUM">Selecione a modalidade</option>
+              </select>
+            </div>
+          </div>
+          <div class="row marginzero">
+            <div class="label padzero">Anexo:</div>
+            <div class="input padzero">
+              <input [disabled]="isDisabled"  type="text" id="anexo" name="anexo" [(ngModel)]="termoRecisao.anexo" />
+            </div>
+          </div>
+          <div class="row marginzero">
+            <div class="label padzero">Objeto:</div>
+            <div class="input padzero">
+              <textarea [disabled]="isDisabled"  id="objeto" name="objeto" rows="4" [(ngModel)]="termoRecisao.objeto"></textarea>
+            </div>
+          </div>
+          <div class="row marginzero">
+            <div class="label padzero">Justificativa da Contratação:</div>
+            <div class="input padzero">
+              <textarea [disabled]="isDisabled"  id="justificativa" name="justificativa" rows="4"
+                [(ngModel)]="termoRecisao.justificativa"></textarea>
+            </div>
+          </div>
+          <div class="row marginzero">
+            <div class="label padzero">
+              Modalidade de Licitação (Inexigibilidade ou dispensa):
+            </div>
+            <div class="input padzero">
+              <input  [disabled]="isDisabled" type="text" id="modalidade_licitacao" name="modalidade_licitacao"
+                [(ngModel)]="termoRecisao.modalidadeLicitacao" />
+            </div>
+          </div>
+          <div class="row marginzero">
+            <div class="label padzero">Do Investimento:</div>
+            <div class="input padzero">
+              <textarea [disabled]="isDisabled"  id="investimento" name="investimento" rows="4"
+                [(ngModel)]="termoRecisao.investimento"></textarea>
+            </div>
+          </div>
+          <div class="row marginzero">
+            <div class="label padzero">Especificações e Valores Estimados:</div>
+            <div class="input padzero">
+              <textarea [disabled]="isDisabled"  id="especificacoes" name="especificacoes" rows="4"
+                [(ngModel)]="termoRecisao.especificacoes"></textarea>
+            </div>
+          </div>
+          <div class="row marginzero">
+            <div class="label padzero">
+              Ementa; Conteúdo Programático; Docentes e Cronograma:
+            </div>
+            <div class="input padzero">
+              <textarea  [disabled]="isDisabled" id="ementa" name="ementa" rows="4" [(ngModel)]="termoRecisao.ementa"></textarea>
+            </div>
+          </div>
+          <div class="row marginzero">
+            <div class="label padzero">Das Obrigações do Contratante:</div>
+            <div class="input padzero">
+              <textarea  [disabled]="isDisabled" id="obrigacoes_contratante" name="obrigacoes_contratante" rows="4"
+                [(ngModel)]="termoRecisao.obrigacoesContratante"></textarea>
+            </div>
+          </div>
+          <div class="row marginzero">
+            <div class="label padzero">Das Obrigações do Contratada:</div>
+            <div class="input padzero">
+              <textarea  [disabled]="isDisabled" id="obrigacoes_contratada" name="obrigacoes_contratada" rows="4"
+                [(ngModel)]="termoRecisao.obrigacoesContratada"></textarea>
+            </div>
+          </div>
+          <div class="row marginzero">
+            <div class="label padzero">Das Sanções:</div>
+            <div class="input padzero">
+              <textarea  [disabled]="isDisabled" id="sancoes" name="sancoes" rows="4" [(ngModel)]="termoRecisao.sancoes"></textarea>
+            </div>
+          </div>
+          <div class="row marginzero">
+            <div class="label padzero">Da Dotação Orçamentária:</div>
+            <div class="input padzero">
+              <textarea  [disabled]="isDisabled" id="dotacao_orcamentaria" name="dotacao_orcamentaria" rows="4"
+                [(ngModel)]="termoRecisao.dotacaoOrcamentaria"></textarea>
+            </div>
+          </div>
+          <div class="row marginzero">
+            <div class="label padzero">Condições de Pagamento:</div>
+            <div class="input padzero">
+              <textarea  [disabled]="isDisabled" id="condicoes_pagamento" name="condicoes_pagamento" rows="4"
+                [(ngModel)]="termoRecisao.condicoesPagamento"></textarea>
+            </div>
+          </div>
+          <div class="row marginzero">
+            <div class="label padzero">
+              Documentos Relativos à Regularidade Fiscal e Trabalhista:
+            </div>
+            <div class="input padzero">
+              <textarea [disabled]="isDisabled"  id="documentos_regularidade" name="documentos_regularidade" rows="4"
+                [(ngModel)]="termoRecisao.documentosRegularidade"></textarea>
+            </div>
+          </div>
+          <div class="row marginzero">
+            <div class="label padzero">
+              Do Contrato: (Quando Necessário)
+            </div>
+            <div class="input padzero">
+              <textarea [disabled]="isDisabled"  id="contrato" name="contrato" rows="4" [(ngModel)]="termoRecisao.contrato"></textarea>
+            </div>
+          </div>
+          <div class="row marginzero">
+            <div class="label padzero">
+              Do Acompanhamento e da Fiscalização:
+            </div>
+            <div class="input padzero">
+              <textarea [disabled]="isDisabled"  id="acompanhamento" name="acompanhamento" rows="4"
+                [(ngModel)]="termoRecisao.acompanhamento"></textarea>
+            </div>
+          </div>
+          <div class="row marginzero">
+            <div class="label padzero">Dados do Contratado:</div>
+            <div class="input padzero">
+              <input [disabled]="isDisabled"  type="text" id="nome_assinante" name="nome_assinante" placeholder="Nome do assinante"
+                value="Marcos Jose da Silva" [(ngModel)]="termoRecisao.nomeAssinante" />
+              <input [disabled]="isDisabled"  type="text" id="cargo_assinante" name="cargo_assinante" placeholder="Cargo do assinante"
+                value="Coordenador Geral da Escola Superior de Contas" [(ngModel)]="termoRecisao.cargoAssinante" />
+            </div>
+          </div>
+        </div>
+
+        <div class="column" style="display: flex; width: 100%; justify-content: space-around" *ngIf="!imprimir">
+          <button class="btn btn-outline" style="z-index: 999" *ngIf="!imprimir"
+            (click)="this.imprimir = true; salvarRelatorio2('tr')">
+            Gerar Relatório
+          </button>
+          <button style=" z-index: 999999" *ngIf="user.isCoordenador || user.isEstagiario"
+            class="btn btn-primary" (click)="os.tr = termoRecisao;  salvaTr(); scrollUp()">
+            Confirmar
+          </button>
+          <button class="btn btn-danger" (click)="proximaPaginaOs()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

@@ -1,0 +1,47 @@
+<header class="headerLogoEscola">
+  <div class="logo-container">
+    <img src="logo.png" alt="Logo da Escola" class="logo">
+  </div>
+
+  <!-- Menu principal -->
+  <nav class="menu">
+    <ul class="sublinhadoNav" style="display: inline-flex;">
+      <li [routerLink]="'/acoes-educacionais'" style="min-width: 210px; "  class="link">AÇÕES EDUCACIONAIS</li>
+      <li [routerLink]="'/dashboard'" class="link">DASHBOARD</li>
+      <li [routerLink]="'/sobre'" class="link">SOBRE</li>
+      <li [routerLink]="'/sugestoes'" class="link">SUGESTÕES</li>
+    </ul>
+  </nav>
+
+  <!-- Notificações e Login -->
+  <div class="right-section">
+    <a [routerLink]="'/app-notificacoes'" class="notificationNav" style="padding-top: 5px;">
+      <i class="bi bi-bell"></i>
+      <p>{{ messages.length }}</p>
+    </a>
+
+    <div *ngIf="isLoggedIn" class="loginNav" style="padding-top: 5px;">
+      <div [routerLink]="'/loginconfig'" class="hover" style="cursor: pointer!important;  display: inline-flex; align-items: center;">
+        <img src="iconlogin.jpg" alt="Foto de Perfil" class="profile-pic">
+        <h1 style="margin-bottom: 0;">{{ isLoggedUser }}</h1>
+      </div>
+      <ul>
+        <a href="#" (click)="logout()" style="margin-left: 100px;" class="sairLogout">
+          <li>Sair</li>
+        </a>
+      </ul>
+    </div>
+  </div>
+
+  <div #toastContainer class="toast-container position-fixed top-0 end-0 p-3">
+    <div [routerLink]="'/app-notificacoes'" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header">
+        <strong class="textb me-auto">Nova OS</strong>
+        <button type="button" class="textb btn-close" (click)="hideToast()" aria-label="Close"></button>
+      </div>
+      <div class="textb toast-body">
+        {{currentMsg}}
+      </div>
+    </div>
+  </div>
+</header>

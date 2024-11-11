@@ -1,0 +1,45 @@
+<app-navbar
+  style="
+    position: fixed;
+    min-height: 100px;
+    min-width: 100%;
+    z-index: 9999999999999999999999999999999999999 !important;
+  "
+></app-navbar>
+<div class="container" style="margin-top: 0; padding-top: 115px">
+  <h2 style="font-size: 40px">Notificações</h2>
+  <!-- <button (click)="addNotificacao()">Adicionar Notificação</button> -->
+  <button (click)="clearNotificacoes()">Limpar Todas</button>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Número</th>
+        <th>Documento</th>
+        <th>Nome do Curso</th>
+        <th>Acessar</th>
+        <th>Excluir</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let notificacao of notificacoesCursos">
+        <td>
+          <b>{{ notificacao.osN }}</b>
+        </td>
+        <td>
+          <b>{{ notificacao.tipo }}</b>
+        </td>
+        <td>
+          <p>{{ notificacao.nomeCurso }}</p>
+        </td>
+        <td >
+          <button [routerLink]="'/editar-curso/'+notificacao.osN+'/true'" style="cursor: pointer;">Acessar</button>
+        </td>
+
+        <td>
+          <button (click)="deleteNotificacao(notificacao)">Excluir</button>
+        </td>
+        
+      </tr>
+    </tbody>
+  </table>
+</div>
