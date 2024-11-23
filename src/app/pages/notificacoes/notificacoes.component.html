@@ -21,7 +21,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let notificacao of notificacoesCursos">
+      <tr *ngFor="let notificacao of notificacoesCursos; let i = index">
         <td>
           <b>{{ notificacao.osN }}</b>
         </td>
@@ -36,8 +36,8 @@
         </td>
 
         <td>
-          <button (click)="deleteNotificacao(notificacao)">Excluir</button>
-        </td>
+          <button style="z-index: 999999999999999999999999999;" (click)="notificacoesCursos.splice(i, 1); deleteNotificacao(notificacao);">Excluir</button>
+        </td> 
         
       </tr>
     </tbody>

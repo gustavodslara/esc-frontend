@@ -40,6 +40,7 @@ export class AppLoginConfigComponent implements OnInit {
     await this.authService.save(this.user);
     this.salvo = true;
     this.mudeSenha = false;
+    window.location.reload();
   }
 
   salvo = false;

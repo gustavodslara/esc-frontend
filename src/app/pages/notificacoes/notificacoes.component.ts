@@ -35,11 +35,30 @@ export class NotificacoesComponent {
 
   constructor(private websocketService: WebsocketService, private notification: NotificationService) {
     var ws = this.websocketService.socketConnector();
+
+
+    this.notification.getNotifications().subscribe(notifications => {
+      console.log("IMPORRA")
+      console.log(notifications)
+      this.notificacoesCursos = [];
+      notifications.forEach((element: string) => {
+      let { id, name, etc } = this.parseOsString(element);
+      const currentDate = new Date();
+
+      // Format the date in Brazilian format
+      const formattedDate = format(currentDate, 'dd/MM/yy HH:mm');
+
+      this.addNotificacao(id.toString(), name, etc, formattedDate);
+    });
+    this.notificacoesCursos.reverse();
+
+    });
+
+
     ws.subscribe(
       (msg: any) => {
         let m = msg.message;
         let m2 = msg.message;
-        console.log("MENSAGGGEE");
         console.log(m);
 
         let { id, name, etc } = this.parseOsString(m);
@@ -52,26 +71,21 @@ export class NotificacoesComponent {
       () => console.log('complete')
     );
 
-    this.notification.getNotifications().subscribe(notifications => {
-      console.log("IMPORRA")
-      console.log(notifications)
-      this.substituirNotifi(notifications);
 
-    });
   }
 
   substituirNotifi(n: any) {
     this.notificacoesCursos = [];
     n.forEach((element: string) => {
       let { id, name, etc } = this.parseOsString(element);
-      const currentDate = new Date(); 
+      const currentDate = new Date();
 
       // Format the date in Brazilian format
-      const formattedDate = format(currentDate, 'dd/MM/yy HH:mm'); 
+      const formattedDate = format(currentDate, 'dd/MM/yy HH:mm');
 
       this.addNotificacao(id.toString(), name, etc, formattedDate);
     });
-    this.notificacoesCursos.reverse(); 
+    this.notificacoesCursos.reverse();
 
   }
 
@@ -120,13 +134,11 @@ export class NotificacoesComponent {
   }
 
   deleteNotificacao(notificacao: { osN: null; nomeCurso: string; tipo: string; }) {
-    const index = this.notificacoesCursos.indexOf(notificacao);
-    if (index > -1) {
-      this.notificacoesCursos.splice(index, 1);
-    }
+   this.notification.deleteNotification(notificacao);
   }
 
   clearNotificacoes() {
     this.notificacoesCursos = [];
+    this.notification.clearNot();
   }
 }

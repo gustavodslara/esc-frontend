@@ -89,21 +89,14 @@ export class ListaCursosComponent {
         return;
       }
       let list: [] = res;
-      console.log('AQYU RESS');
-      console.log(res);
       list.reverse();
       this.listaCursos = list;
       this.listaCursosBackup = list;
-      console.log(this.listaCursos);
-      console.log(this.listaCursosBackup);
       this.carregando = false;
     }, 100);
   }
 
   getUltimoId2() {
-    console.log(this.listaCursos);
-    console.log(this.listaCursos[0].id);
-    console.log(this.listaCursos.length  > 0);
     return this.listaCursos.length  > 0 ? Number(this.listaCursos[0].id) + 1 : 1;
   }
 
@@ -133,8 +126,6 @@ export class ListaCursosComponent {
   }
 
   goToEdit(idCurso?: any, edit = false) {
-    console.log('AQUIi');
-    console.log(idCurso);
     let id = this.getId(idCurso);
 
     this.router.navigateByUrl('editar-curso/' + id + '/' + edit);

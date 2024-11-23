@@ -1,8 +1,11 @@
 {
-    "/api": {
-      "target": "http://187.123.24.94:8081",
-      "secure": false,
-      "changeOrigin": true,
-      "logLevel": "debug" 
+  "/api": {
+    "target": "http://25.1.80.110:8081",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/api": ""
     }
   }
+}

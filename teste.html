@@ -1,0 +1,578 @@
+<div *ngIf="exibirMr" class="info-table" style="margin-left: 400px !important;">
+    <h1>Matriz de Responsabilidade N.º{{ os.id }}/2024</h1>
+
+    <!-- Tema -->
+
+    <div class="row marginzero">
+        <div class="label padzero">Tema:</div>
+        <div class="input padzero">
+            <textarea [(ngModel)]="os.tituloEvento" type="text" id="tituloEvento" disabled></textarea>
+        </div>
+    </div>
+
+    <!-- Objetivo -->
+
+    <div class="row marginzero">
+        <div class="label padzero">Objetivo:</div>
+        <div class="input padzero">
+            <textarea [(ngModel)]="os.objetivo" type="text" id="objetivo" rows="5"></textarea>
+        </div>
+    </div>
+
+    <!-- Público-alvo -->
+
+    <div class="row" class="row marginzero">
+        <div class="label" class="label padzero">Público-alvo:</div>
+        <div class="input" class="input padzero">
+            <textarea [(ngModel)]="os.publicoAlvomr" type="text" id="publicoAlvomr" rows="5"></textarea>
+        </div>
+    </div>
+
+
+    <h3 style="margin-left: 26px;font-size:20px; font-weight: bold ;margin-bottom: 10px;">Datas e Horários:</h3>
+    <div *ngFor="let item of os.datasHorarios; let i = index" class="row marginzero">
+        <div class="label padzero">Data:</div>
+        <div class="input padzero">
+            <input [(ngModel)]="item.data" type="date" disabled />
+        </div>
+
+        <div class="label padzero">Horário de Início:</div>
+        <div class="input padzero">
+            <input [(ngModel)]="item.horaInicio" type="time" disabled />
+        </div>
+
+        <div class="label padzero">Horário de Término:</div>
+        <div class="input padzero">
+            <input [(ngModel)]="item.horaFim" type="time" disabled />
+        </div>
+    </div>
+
+
+    <div class="row" class="row marginzero">
+        <div class="label" class="label padzero">Local:</div>
+        <div class="input" class="input padzero">
+            <input [(ngModel)]="os.local" type="text" id="local" value="os.local" disabled />
+        </div>
+    </div>
+
+
+    <div *ngIf="isEditando" class="row marginzero">
+        <div class="label" class="label padzero">
+            Público previsto:
+        </div>
+        <div class="textarea" class="input padzero">
+            <input type="number" [(ngModel)]="os.publicoPrevisto" id="publicoPrevisto" row="0 !important"
+                value="os.publicoPrevisto">
+
+        </div>
+    </div>
+
+    <div class="row" class="row marginzero">
+        <div class="label" class="label padzero">
+            Link de inscrição:
+        </div>
+        <div class="input" class="input padzero">
+            <input [(ngModel)]="os.linkinscricao" type="text" id="linkinscricao">
+        </div>
+    </div>
+
+
+    <div *ngIf="isEditando" class="row marginzero">
+        <div class="label" class="label padzero">Carga Horária:</div>
+        <div class="input" class="input padzero">
+            <input [(ngModel)]="os.cargaHoraria" type="number" id="cargaHoraria" disabled />
+        </div>
+    </div>
+    <div class="row" class="row marginzero">
+        <div class="label">Modalidade:</div>
+        <div class="input" class="input padzero">
+            <input [(ngModel)]="os.modalidade" id="modalidade" value="os.modalidade" disabled>
+        </div>
+    </div>
+
+    <div class="row marginzero">
+        <div class="label padzero">Demanda:</div>
+        <div class="input padzero">
+            <textarea [(ngModel)]="os.demanda" id="demanda" row="0" value="os.demanda" disabled>
+            </textarea>
+        </div>
+    </div>
+
+
+    <div class="row" class="row marginzero">
+        <div class="label" class="label padzero">Coordenador Geral:</div>
+        <div class="input" class="input padzero">
+            <input type="text" id="coordenadorGeral" value="Marcos José da Silva" rows="1" disabled />
+        </div>
+    </div>
+    <div class="row" class="row marginzero">
+        <div class="label" class="label padzero">
+            Coordenadoria de Apoio Institucional:
+        </div>
+        <div class="input" class="input padzero">
+            <input type="text" id="coordenadoriaApoioInstitucional" value="Carlos Arantes" disabled />
+        </div>
+    </div>
+    <div class="row" class="row marginzero">
+        <div class="label" class="label padzero">
+            Coordenadoria de Capacitação do TCE-MT:
+        </div>
+        <div class="input" class="input padzero">
+            <input type="text" value="Marina Bressane Spinelli" disabled>
+        </div>
+    </div>
+
+
+    <div class="row" class="row marginzero">
+        <div class="label" class="label padzero">
+            Coordenadoria de Administração Municipal:
+        </div>
+        <div class="input" class="input padzero">
+            <input type="text" value="Clenilda Poletto" disabled>
+        </div>
+    </div>
+
+
+    <!-- Seção para Apoio Coordenadoria -->
+    <div class="row marginzero" style=" margin-left: 20px;">
+        <h3 style="margin-left: 0px; font-size: 20px; font-weight: bold; margin-bottom: 10px;">
+            Apoio Coordenadoria:
+        </h3>
+        <div *ngFor="let item of os.coordenacaoApoioAcao; let i = index" class="row marginzero">
+            <div class="input padzero">
+                <select [(ngModel)]="os.coordenacaoApoioAcao[i]" id="coordenacaoApoioAcao" disabled>
+                    <option *ngFor="let select of selectsCoordenacaoApoio" [value]="select">{{ select }}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row" class="row marginzero"> <!--AJUSTAR OBSERVACAO USANO CHECKBOX-->
+        <div class="label" class="label padzero">Observação:</div>
+        <div class="input" class="input padzero">
+            <textarea [(ngModel)]="os.observacao" id="observacao" rows="3"></textarea>
+        </div>
+    </div>
+
+    <!-- DESCRICAO ATRIBUICOES -->
+
+    <style>
+        .container {
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .responsavel {
+            display: flex;
+            flex-direction: column;
+            width: auto;
+        }
+
+        input[type="text"] {
+            width: 90%;
+            padding: 5px;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        .textareaSize {
+            width: 100%;
+            height: auto;
+        }
+
+        span {
+            font-weight: bold;
+        }
+    </style>
+    <div>
+        <h1>Descrição das Atribuições</h1>
+        <table>
+            <tr>
+                <th>Unidade Responsável</th>
+                <th>Atribuições</th>
+            </tr>
+            <tr>
+                <td class="responsavel">
+                    <span>Presidente</span>
+                    <input type="text" name="nome_presidente1" value="Sérgio Ricardo de Almeida " disabled>
+                </td>
+                <td><textarea type="text" name="atribuicoes1" rows="10" class="textareaSize" disabled>
+  •Validar a Ação Educacional; 
+  •Assinar ofícios para Prefeitos e Secretários de Saúde e demais •Autoridades, em conjunto com Gabinete do Conselheiro Guilherme Maluf; 
+  •Assinar CI/Convite para participação de Conselheiros e Procuradores, em conjunto com Gabinete do Conselheiro Guilherme Maluf; 
+  •Autorizar as despesas inerentes da Ação Educacional.</textarea></td>
+            </tr>
+            <tr>
+                <td class="responsavel">
+                    <span>Gabinete da Presidência</span>
+                    <input type="text" name="nome_presidente2" value="Paula Pietro " disabled>
+                </td>
+                <td><textarea type="text" name="atribuicoes2" value="" rows="4" class="textareaSize" disabled>
+  •Acompanhar a execução da Ação Educacional junto à Comissão Permanente de Saúde e Assistência Social do TCE-MT; 
+  •Confirmar a participação do Presidente na abertura da Cerimônia.</textarea></td>
+            </tr>
+            <tr>
+                <td class="responsavel">
+                    <span>Secretaria Geral da Presidência</span>
+                    <input type="text" name="nome_presidente3" value="Nilson Fernando Gomes Bezerra " disabled>
+                </td>
+                <td><textarea type="text" name="atribuicoes3" rows="1" class="textareaSize"
+                        disabled>Para conhecimento e participação.</textarea></td>
+            </tr>
+        </table>
+
+        <table style="margin-top: 15px;">
+            <tr>
+                <th>GABINETE DE CONSELHEIRO – PROCURADOR DE CONTAS</th>
+                <th></th>
+            </tr>
+
+            <tr>
+                <th>Unidade Responsável</th>
+                <th>Atribuições</th>
+            </tr>
+
+            <tr>
+                <td class="responsavel">
+                    <span>Gabinete Conselheiro</span>
+                    <input type="text" name="nome_presidente1" value="Antônio Joaquim" disabled>
+                </td>
+                <td><textarea type="text" name="atribuicoes1" rows="1" class="textareaSize"
+                        disabled>Para conhecimento e participação.</textarea></td>
+            </tr>
+            <tr>
+                <td class="responsavel">
+                    <span>Conselheiro Supervisor</span>
+                    <input type="text" name="nome_presidente2" value="Conselheiro Valter Albano" disabled>
+                </td>
+                <td><textarea type="text" name="atribuicoes2" value="" rows="1" class="textareaSize"
+                        disabled>Para conhecimento e participação.</textarea></td>
+            </tr>
+
+            <tr>
+                <td class="responsavel">
+                    <span>Gabinete do Conselheiro</span>
+                    <input type="text" name="nome_presidente3" value="Waldir Júlio Teis" disabled>
+                </td>
+                <td><textarea type="text" name="atribuicoes3" rows="1" class="textareaSize"
+                        disabled>Para conhecimento e participação.</textarea></td>
+            </tr>
+
+            <tr>
+                <td class="responsavel">
+                    <span>Gabinete do Conselheiro</span>
+                    <input type="text" name="nome_presidente3" value="José Carlos Novelli" disabled>
+                </td>
+                <td><textarea type="text" name="atribuicoes3" rows="1" class="textareaSize"
+                        disabled>Para conhecimento e participação.</textarea></td>
+            </tr>
+
+            <tr>
+                <td class="responsavel">
+                    <span>Gabinete do Conselheiro</span>
+                    <input type="text" name="nome_presidente3" value="Conselheiro Domingos Neto" disabled>
+                </td>
+                <td><textarea type="text" name="atribuicoes3" rows="1" class="textareaSize"
+                        disabled>Para conhecimento e participação.</textarea></td>
+            </tr>
+
+            <tr>
+                <td class="responsavel">
+                    <span>Procurador-geral de Contas</span>
+                    <input type="text" name="nome_presidente3" value="Alisson Carvalho de Alencar" disabled>
+                </td>
+                <td><textarea type="text" name="atribuicoes3" rows="1" class="textareaSize"
+                        disabled>Para conhecimento e participação.</textarea></td>
+            </tr>
+
+            <tr>
+                <th>CONSULTORIA JURIDICA GERAL</th>
+                <th></th>
+            </tr>
+
+            <tr>
+                <th>Unidade Responsável</th>
+                <th>Atribuições</th>
+            </tr>
+            <tr>
+                <td class="responsavel">
+                    <span>Consultoria Jurídica Geral</span>
+                    <input type="text" name="nome_presidente1" value="Grhegory Paiva Maia" disabled>
+                </td>
+                <td><textarea type="text" name="atribuicoes1" rows="1" class="textareaSize"
+                        disabled>Para conhecimento.</textarea></td>
+            </tr>
+
+            <tr>
+                <th>COMISSÃO PERMANENTE DE SAÚDE E ASSISTÊNCIA SOCIAL DO TCE-MT</th>
+                <th></th>
+            </tr>
+
+
+            <tr>
+                <th>Unidade Responsável</th>
+                <th>Atribuições</th>
+            </tr>
+
+
+        </table>
+
+        <table>
+
+            <tr>
+                <td class="responsavel">
+                    <span>Gabinete do Conselheiro Comissão Permanente de Saúde e Assistência Social do TCE-MT</span>
+                    <input type="text" name="nome_presidente1" value="Guiherme Maluf" disabled>
+                </td>
+                <td style="width: 600px !important;"><textarea type="text" name="atribuicoes1" rows="25"
+                        class="textareaSize">
+  •Encaminhar Termo de Referência da Ação Educacional a ESC; 
+  •Definir o público do evento em conjunto com a Presidência;
+  •Enviar ofícios para Prefeitos e Secretários de Saúde e demais Autoridades;  
+  •Definir programação; 
+  •Encaminhar programação para Comunicação para diagramação;  
+  •Verificar a possibilidade de uso do Plenário do TCE-MT para transmissão do encontro; 
+  •Encaminhar programação para ESC e demais unidades envolvidas;  
+  •Supervisionar o planejamento e a execução da Ação Educacional; 
+  •Encaminhar CI/Convite para Membros, Procuradores e todas as unidades em conjunto com o Gabinete da Presidência;  
+  •Definir em conjunto com o cerimonial, o dispositivo de honra;  
+  •Aprovar o roteiro em conjunto com cerimonial; 
+  •Encaminhar cópias dos ofícios para a ESC e Cerimonial;  
+  •Encaminhar para o Núcleo de Cerimonial cópias dos CI´s, para confirmação de presença; 
+  •Encaminhar mini currículo dos painelistas a SECOM e Cerimonial;  
+  •Orçar despesas da Ação Educacional; 
+  •Solicitar compra de passagem e hospedagem para palestrante; 
+  •Encaminhar a lista de painelistas e palestrantes que necessitarão de transporte; 
+  •Encaminhar a lista de painelistas e palestrantes que irão estacionar na frente da ESC; 
+  •Solicitar os slides das apresentações aos painelistas e encaminhar para ESC até o dia 31/10/2024. </textarea></td>
+            </tr>
+
+        </table>
+
+        <table>
+            <tr>
+                <th>GESTÃO EXECUTIVA</th>
+                <th></th>
+            </tr>
+
+            <tr>
+                <th>Unidade Responsável</th>
+                <th>Atribuições</th>
+            </tr>
+            <tr>
+                <td class="responsavel">
+                    <span>Secretaria Executiva de Orçamento, Finanças e Contabilidade</span>
+                    <input type="text" name="nome_presidente1" value="Mauricio Marques" disabled>
+                </td>
+                <td style="width: auto;"><textarea type="text" name="atribuicoes1" rows="2" class="textareaSize"
+                        disabled>
+  •Realizar as ações financeiras e orçamentárias relativas às despesas do TCE-MT.</textarea></td>
+            </tr>
+            <tr>
+                <td class="responsavel">
+                    <span>Escola Superior de Contas</span>
+                    <input type="text" name="nome_presidente1" value="Marcos José da Silva" disabled>
+                    <input type="text" name="nome_presidente1" value="Marina Pinelli" disabled style="margin-top: 5px;">
+                    <input type="text" name="nome_presidente1" value="Carlos Rubens" disabled style="margin-top: 5px;">
+                    <input type="text" name="nome_presidente1" value="Clenilda Poletto" disabled
+                        style="margin-top: 5px;">
+
+                </td>
+                <td style="width: 50%;"><textarea type="text" name="atribuicoes1" rows="25" class="textareaSize"
+                        disabled>
+  •Receber a demanda da Ação Educacional;  
+  •Compartilhar com o Conselheiro supervisor a demanda recebida;
+  •Criar link de inscrição; 
+  •Definir equipe de trabalho;  
+  •Elaborar e acompanhar a matriz de responsabilidades, o checklist e demais documentos necessários; 
+  •Gerenciar a ação educacional quanto aos aspectos operacionais, logísticos e de divulgação; 
+  •Encaminhar diariamente a lista de inscritos para a Comissão permanente de Saúde e Assistência Social do TCE-MT; 
+  •Solicitar serviço de coffee break; 
+  •Organizar a montagem dos materiais da Ação Educacional: pastas, canetas e blocos de rascunho;  
+  •Organizar sala de Pessoas Importantes; 
+  •Solicitar Intérprete de libras; 
+  •Providenciar som ambiente no foyer, durante coffee break; 
+  •Solicitar canetas; 
+  •Providenciar transporte dos palestrantes e painelistas; 
+  •Encaminhar para o Gabinete Militar, a lista das painelistas e palestrantes para reserva espaço de estacionamento na frente da Escola; 
+  •Liberar Certificado aos participantes </textarea></td>
+            </tr>
+
+
+            <tr>
+                <td class="responsavel">
+                    <span>Secretaria de Tecnologia da Informação</span>
+                    <input type="text" name="nome_presidente1" value="André Luiz Costa Cruz" disabled>
+                </td>
+                <td><textarea type="text" name="atribuicoes1" rows="5" class="textareaSize"
+                        disabled>•Disponibilizar técnicos para atendimento/suporte durante todo evento;       •Garantir velocidade/conexão adequada para transmissão e credenciamento da Ação Educacional. </textarea>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="responsavel">
+                    <span>Secretaria de Comunicação Social</span>
+                    <input type="text" name="nome_presidente1" value="Raoni Pedroso Ricci" disabled>
+                </td>
+                <td><textarea type="text" name="atribuicoes1" rows="20" class="textareaSize" disabled>•Organizar/planejar com a unidade demandante as providencias necessárias para criação das artes: Tamplates, post´s, certificados para painelistas, programação, fichas de perguntas; etc;  
+  •Providenciar a diagramação da Programação;  
+  •Providenciar banner´s de sinalização/identificação dos ambientes de realização da Ação Educacional; 
+  •Providenciar juntamente com a empresa terceirizada a gravação e sonorização; 
+  •Confeccionar material eletrônico para divulgação (e-mail marketing, post whats, tamplates, Wallpaper etc.);  
+  •Confeccionar banner eletrônico e disponibilizar no site do TCE-MT;  
+  •Providenciar Púlpito digital para o Auditório da ESC; 
+  •Providenciar backdrop; 
+  •Providenciar 10 microfones;
+  •Providenciar material gráfico: Pastas, certificado dos palestrantes, blocos de rascunho; fichas de perguntas; 
+  •Realizar a cobertura jornalística e fotográfica da ação educacional; 
+  •Criar link do YouTube para transmissão; 
+  •Providenciar transmissão via canais de comunicação do TCE-MT; 
+  •Inserir transmissão para libras.</textarea></td>
+            </tr>
+            <tr>
+                <td class="responsavel">
+                    <span style="margin-bottom: 10px;">Secretaria de Comunicação Social</span>
+                    <input type="text" name="nome_presidente1" value="Carlos Roberto Lourençon" disabled>
+                    <div style="margin-top: 90px;"></div>
+                    <input type="text" name="nome_presidente1" value="Núcleo de Cerimonial Danielle Sarris" disabled
+                        style="display: flex; align-items: center; justify-content: center; height: auto;">
+                    <div style="margin-top: 358px;"></div>
+                    <input type="text" name="nome_presidente1" value="Núcleo de Patrimônio Rodrigo Welter Teischmann"
+                        disabled style="display: flex; align-items: center; justify-content: center; height: auto;">
+                    <div style="margin-bottom: 70px;"></div>
+                    <input type="text" name="nome_presidente1" value="Gerencia de Transportes Alexandre Biancardi"
+                        disabled style="display: flex; align-items: center; justify-content: center; height: auto;">
+                    <div style="margin-bottom: 30px;"></div>
+
+                </td>
+                <td><textarea type="text" name="atribuicoes1" rows="5" class="textareaSize" disabled>
+  •Providenciar serviço de coffee break; 
+  •Informar ao restaurante o público previsto da Ação Educacional; 
+  •Disponibilizar Intérprete de libras; 
+  •Apoiar na garantia de recursos necessários</textarea>
+                    <textarea type="text" name="atribuicoes1" rows="15" class="textareaSize" disabled>
+  •Organizar e apoiar toda logística da ação educacional e alinhamento das diretrizes com as unidades envolvidas; 
+  •Definir em conjunto com o Gabinete do Conselheiro Guilherme Maluf o dispositivo de honra; 
+  •Elaborar roteiro e submeter ao Gabinete do Conselheiro Guilherme Maluf para aprovação; 
+  •Receber cópia das CI’s para a confirmação de presença dos Conselheiros e demais convidados que compõem mesa de honra;  
+  •Confirmar via telefone a participação das autoridades e demais convidados;
+  •Recepcionar e prestar informações aos participantes;  
+  •Disponibilizar recepcionistas para recolhimento das perguntas; 
+  •Disponibilizar Mestre Cerimônia. </textarea>
+                    <textarea type="text" name="atribuicoes1" rows="5" class="textareaSize" disabled>
+  •Disponibilizar reforço para equipe de limpeza; 
+  •Disponibilizar garçom para atender exclusivamente as autoridades; 
+  •Garantir café e água em todos os ambientes da Ação Educacional; 
+  •Disponibilizar equipe para movimentação dos patrimônios.</textarea>
+                    <textarea type="text" name="atribuicoes1" rows="3" class="textareaSize" disabled>
+  •Disponibilizar veículos e motoristas para o transporte dos painelistas e palestrantes;</textarea>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="responsavel">
+                    <span>Secretaria de Tecnologia da Informação</span>
+                    <input type="text" name="nome_presidente1" value="André Luiz Costa Cruz" disabled>
+                </td>
+                <td><textarea type="text" name="atribuicoes1" rows="5" class="textareaSize"
+                        disabled>•Disponibilizar técnicos para atendimento/suporte durante todo evento;       •Garantir velocidade/conexão adequada para transmissão e credenciamento da Ação Educacional. </textarea>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="responsavel">
+                    <span>Secretaria de Comunicação Social</span>
+                    <input type="text" name="nome_presidente1" value="Raoni Pedroso Ricci" disabled>
+                </td>
+                <td><textarea type="text" name="atribuicoes1" rows="20" class="textareaSize" disabled>•Organizar/planejar com a unidade demandante as providencias necessárias para criação das artes: Tamplates, post´s, certificados para painelistas, programação, fichas de perguntas; etc;  
+  •Providenciar a diagramação da Programação;  
+  •Providenciar banner´s de sinalização/identificação dos ambientes de realização da Ação Educacional; 
+  •Providenciar juntamente com a empresa terceirizada a gravação e sonorização; 
+  •Confeccionar material eletrônico para divulgação (e-mail marketing, post whats, tamplates, Wallpaper etc.);  
+  •Confeccionar banner eletrônico e disponibilizar no site do TCE-MT;  
+  •Providenciar Púlpito digital para o Auditório da ESC; 
+  •Providenciar backdrop; 
+  •Providenciar 10 microfones;
+  •Providenciar material gráfico: Pastas, certificado dos palestrantes, blocos de rascunho; fichas de perguntas; 
+  •Realizar a cobertura jornalística e fotográfica da ação educacional; 
+  •Criar link do YouTube para transmissão; 
+  •Providenciar transmissão via canais de comunicação do TCE-MT; 
+  •Inserir transmissão para libras.</textarea></td>
+            </tr>
+            <tr>
+                <td class="responsavel">
+                    <span>TV Contas</span>
+                    <input type="text" name="nome_presidente1" value="José Mota" disabled
+                        style="display: flex; align-items: center; justify-content: center; height: auto; margin-bottom: 70px;">
+                </td>
+                <td><textarea type="text" name="atribuicoes1" rows="5" class="textareaSize" disabled>
+  •Produzir conteúdo de TV (entrevistas); 
+  •Realizar a cobertura jornalística e fotográfica da ação educacional; 
+  •Providenciar transmissão da Ação Educacional; 
+  •Confeccionar filmes/vídeos para divulgação institucional. </textarea>
+            </tr>
+
+            <tr>
+                <td class="responsavel">
+                    <span>Gabinete Militar</span>
+                    <input type="text" name="nome_presidente1" value="Hadassah Suzannah Beserra de Souza" disabled
+                        style="display: flex; align-items: center; justify-content: center; height: auto; margin-bottom: 130px;">
+                </td>
+                <td><textarea type="text" name="atribuicoes1" rows="8" class="textareaSize" disabled>
+  •Disponibilizar equipe para garantir a segurança dos locais da Ação Educacional; 
+  •Disponibilizar Bombeiros Militares / Brigadistas em atendimento a CI 252/2024/NQVT; 
+  •Reservar o espaço de estacionamento na frente da ESC para painelistas e palestrantes; 
+  •Reservar a frente da ESC para embarque e desembarque das Autoridades. </textarea>
+            </tr>
+
+        </table>
+
+
+
+
+
+    </div>
+
+
+
+    <div class="column" style="display: flex; width: 100%; justify-content: space-around">
+        <button class="btn btn-outline" style="z-index: 999" *ngIf="!imprimir"
+            (click)="this.imprimir = true; salvarRelatorio2('os')">
+            Gerar Documento
+        </button>
+
+        <button class="btn btn-primary" *ngIf="!imprimir" (click)="
+              salvaCurso();
+              proximaPagina();
+              exibirMenuOS = false;
+              faseAtual = faseAtual + 1;
+              (!exibirTr);
+              (exibirOs);
+            ">
+            Confirmar/Salvar
+        </button>
+        <button class="btn btn-danger" *ngIf="!imprimir" (click)="fechar()">
+            Cancelar
+        </button>
+    </div>
+</div>

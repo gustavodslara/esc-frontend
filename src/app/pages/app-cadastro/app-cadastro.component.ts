@@ -2,11 +2,14 @@ import { Component, NgModule, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
+import { NavbarComponent } from '../../components/navbar/navbar.component';
 
 @Component({
   selector: 'app-cadastro',
+  standalone: true,
   templateUrl: './app-cadastro.component.html',
-  styleUrls: ['./app-cadastro.component.scss']
+  styleUrls: ['./app-cadastro.component.scss'],
+  imports: [NavbarComponent, CommonModule, FormsModule],
 })
 export class AppCadastroComponent implements OnInit {
   studentList: any[] = [];
@@ -15,7 +18,7 @@ export class AppCadastroComponent implements OnInit {
   searchText: string = '';
   loading: boolean = false;
 
-  constructor() {}
+  constructor() { }
 
   ngOnInit() {
     // Inicialização dos dados de estudantes
@@ -46,7 +49,6 @@ export class AppCadastroComponent implements OnInit {
 
 @NgModule({
   declarations: [
-    AppCadastroComponent
   ],
   imports: [
     BrowserModule,

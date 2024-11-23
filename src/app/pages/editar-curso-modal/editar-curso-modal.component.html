@@ -1,34 +1,26 @@
-<main id="dataToExport" #dataToExport>
-  <img
-    class="distancialogo"
-    src="logo.jpeg"
-    *ngIf="imprimir"
-    style="max-width: 100%"
-  /> 
-      <div class="menuVertical" style="margin-top: 100px; margin-right: 750px !important;">
-      <p *ngIf="isEditando" style="display: flex;">Selecionar Status:</p>
-      <select
-        *ngIf="isEditando"
-        style="max-width: 180px; margin-bottom: 10px"
-        class="form-select"
-        aria-label="Default select example"
-        [(ngModel)]="selectedStatus"
-      >
-        <option value="Agendado">Agendado</option>
-        <option value="Em andamento">Em andamento</option>
-        <option value="Finalizado">Finalizado</option>
-      </select>
-        
-      <div class="lateral" *ngIf="!imprimir">
-        <div class="lateral" *ngIf="isEditando">
-          <div>
-            <div class="col-6" style="display: flex; position: fixed;">
-              <div class="contact-list" style="max-height: 100px; min-height: 600px; overflow-y: auto;">
-                
-                <!-- Ordem de Serviço (OS) -->
-                <div class="card mb-3 goOss"
-                  *ngIf="Osvisivel"
-                  (click)="
+<app-navbar
+  style="position: absolute; z-index: 999999999999999999999999999999999999999999999999999999999999999999999!important;"></app-navbar>
+<main id="dataToExport" #dataToExport *ngIf="!carregando">
+  <img class="distancialogo" src="logo.jpeg" *ngIf="imprimir" style="max-width: 100%" />
+  <div class="menuVertical" style="margin-top: 100px; margin-right: 750px !important;">
+
+
+    <div class="lateral" id="menu" #menu>
+      <div class="lateral" *ngIf="isEditando">
+        <div>
+
+          <div class="col-6" style="display: flex; position: fixed;">
+            <div class="contact-list" style="max-height: 100px; min-height: 600px; overflow-y: auto;">
+              <p *ngIf="isEditando" style="display: flex;">Selecionar Status:</p>
+              <select [disabled]="disabled" *ngIf="isEditando" style="max-width: 180px; margin-bottom: 10px"
+                class="form-select" aria-label="Default select example" [(ngModel)]="os.status">
+                <option value="Agendado">Agendado</option>
+                <option value="Em Andamento">Em Andamento</option>
+                <option value="Finalizado">Finalizado</option>
+                <option value="Cancelado">Cancelado</option>
+              </select>
+              <!-- Ordem de Serviço (OS) -->
+              <div class="card mb-3 goOss" *ngIf="Osvisivel" (click)="
                     proximaPaginaOs();
                     exibirTr = false;
                     exibirOs = true;
@@ -37,17 +29,16 @@
                     exibirAnexos = false;
                     faseAtual = 0
                   ">
-                  <div class="card-header" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight: bold; min-width: 60px; position: block;">
-                    <i class="bi bi-file-earmark-text">Ordem de Serviço</i>
-                  </div>
-                  <div *ngIf="faseAtual == 0" class="card-body" style="background-color: lightgreen;"></div>
-                  <div *ngIf="faseAtual != 0" class="card-body"></div>
+                <div class="card-header"
+                  style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight: bold; min-width: 60px; position: block;">
+                  <i class="bi bi-file-earmark-text">Ordem de Serviço</i>
                 </div>
-      
-                <!-- Termo de Referência (TR) -->
-                <div class="card mb-3 goOss"
-                  *ngIf="Trvisivel"
-                  (click)="
+                <div *ngIf="faseAtual == 0" class="card-body" style="background-color: lightgreen;"></div>
+                <div *ngIf="faseAtual != 0" class="card-body"></div>
+              </div>
+
+              <!-- Termo de Referência (TR) -->
+              <div *ngIf="os.equipeJuridica" class="card mb-3 goOss" (click)="
                     proximaPaginaTr();
                     exibirTr = true;
                     exibirOs = false;
@@ -56,17 +47,16 @@
                     exibirAnexos = false;
                     faseAtual = 1
                   ">
-                  <div class="card-header" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight: bold;">
-                    <i class="bi bi-file-earmark-text">Termo de Referência</i>
-                  </div>
-                  <div *ngIf="faseAtual == 1" class="card-body" style="background-color: lightgreen;"></div>
-                  <div *ngIf="faseAtual != 1" class="card-body"></div>
+                <div class="card-header"
+                  style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight: bold;">
+                  <i class="bi bi-file-earmark-text">Termo de Referência</i>
                 </div>
-      
-                <!-- Matriz de Responsabilidade (MR) -->
-                <div class="card mb-3 goOss"
-                  *ngIf="Mrvisivel"
-                  (click)="
+                <div *ngIf="faseAtual == 1" class="card-body" style="background-color: lightgreen;"></div>
+                <div *ngIf="faseAtual != 1" class="card-body"></div>
+              </div>
+
+              <!-- Matriz de Responsabilidade (MR) -->
+              <div class="card mb-3 goOss" *ngIf="exibirMatriz" (click)="
                     proximaPaginaMr();
                     exibirTr = false;
                     exibirOs = false;
@@ -75,17 +65,16 @@
                     exibirAnexos = false;
                     faseAtual = 2
                   ">
-                  <div class="card-header" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight: bold;">
-                    <i class="bi bi-file-earmark-text">Matriz de Responsabilidade</i>
-                  </div>
-                  <div *ngIf="faseAtual == 2" class="card-body" style="background-color: lightgreen;"></div>
-                  <div *ngIf="faseAtual != 2" class="card-body"></div>
+                <div class="card-header"
+                  style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight: bold;">
+                  <i class="bi bi-file-earmark-text">Matriz de Responsabilidade</i>
                 </div>
-      
-                <!-- Relatório Final (RF) -->
-                <div class="card mb-3 goOss"
-                  *ngIf="Rfvisivel"
-                  (click)="
+                <div *ngIf="faseAtual == 2" class="card-body" style="background-color: lightgreen;"></div>
+                <div *ngIf="faseAtual != 2" class="card-body"></div>
+              </div>
+
+              <!-- Relatório Final (RF) -->
+              <div class="card mb-3 goOss" *ngIf="Rfvisivel" (click)="
                     proximaPaginaRf();
                     exibirTr = false;
                     exibirOs = false;
@@ -94,17 +83,16 @@
                     exibirAnexos = false;
                     faseAtual = 3
                   ">
-                  <div class="card-header" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight: bold;">
-                    <i class="bi bi-file-earmark-text">Relatório Final</i>
-                  </div>
-                  <div *ngIf="faseAtual == 3" class="card-body" style="background-color: lightgreen;"></div>
-                  <div *ngIf="faseAtual != 3" class="card-body"></div>
+                <div class="card-header"
+                  style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight: bold;">
+                  <i class="bi bi-file-earmark-text">Relatório Final</i>
                 </div>
-      
-                <!-- Documentos Anexados (Anexos) -->
-                <div class="card mb-3 goOss"
-                  *ngIf="Anexosvisivel"
-                  (click)="
+                <div *ngIf="faseAtual == 3" class="card-body" style="background-color: lightgreen;"></div>
+                <div *ngIf="faseAtual != 3" class="card-body"></div>
+              </div>
+
+              <!-- Documentos Anexados (Anexos) -->
+              <div class="card mb-3 goOss" *ngIf="Anexosvisivel" (click)="
                     proximaPaginaAnexos();
                     exibirOs = false;
                     exibirTr = false;
@@ -113,34 +101,24 @@
                     exibirAnexos = true;
                     faseAtual = 4
                   ">
-                  <div class="card-header" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight: bold;">
-                    <i class="bi bi-file-earmark-text">Documentos Anexados</i>
-                  </div>
-                  <div *ngIf="faseAtual == 4" class="card-body" style="background-color: lightgreen;"></div>
-                  <div *ngIf="faseAtual != 4" class="card-body"></div>
+                <div class="card-header"
+                  style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight: bold;">
+                  <i class="bi bi-file-earmark-text">Documentos Anexados</i>
                 </div>
-                
+                <div *ngIf="faseAtual == 4" class="card-body" style="background-color: lightgreen;"></div>
+                <div *ngIf="faseAtual != 4" class="card-body"></div>
               </div>
+
             </div>
           </div>
         </div>
       </div>
-      
-      <div
-        *ngIf="carregando"
-        style="top: 50%; left: 50%; position: absolute; z-index: 9999"
-      >
-        <div
-          *ngIf="carregando"
-          style="top: 50%; left: 50%; position: absolute; z-index: 9999"
-          class="spinner-border"
-          role="status"
-        ></div>
-      </div>
-      
+    </div>
 
 
-                    <!-- PAGINA ORDEM DE SERVIÇO -->
+
+
+    <!-- PAGINA ORDEM DE SERVIÇO -->
 
     <div *ngIf="isEditando">
       <div *ngIf="exibirOs" class="info-table" style="margin-left: 400px !important;">
@@ -149,91 +127,85 @@
         <div class="row marginzero">
           <div class="label padzero">Unidade Solicitante:</div>
           <div class="input padzero">
-            <input
-              [(ngModel)]="os.unidadeSolicitante"
-              type="text"
-              id="unidadeSolicitante"
-            />
+            <input [disabled]="disabled" [(ngModel)]="os.unidadeSolicitante" type="text" id="unidadeSolicitante" />
           </div>
         </div>
         <div class="row marginzero">
           <div class="label padzero">Ação Educacional:</div>
           <div class="input padzero">
-            <textarea
-              [(ngModel)]="os.tituloEvento"
-              type="text"
-              id="tituloEvento"
-            ></textarea>
+            <textarea [disabled]="disabled" [(ngModel)]="os.tituloEvento" type="text" id="tituloEvento"></textarea>
           </div>
         </div>
         <div class="row" class="row marginzero">
-         <div class="row marginzero">
-          <h3 style="margin-left: 0px;font-size:20px; font-weight: bold ;margin-bottom: 10px;">Datas e Horários:</h3>
-          <div *ngFor="let item of os.datasHorarios; let i = index" class="row marginzero">
-            <div class="label padzero">Data:</div>
-            <div class="input padzero">
-              <input [(ngModel)]="item.data" type="date" />
+          <div class="row marginzero">
+            <h3 style="margin-left: 0px;font-size:20px; font-weight: bold ;margin-bottom: 10px;">Datas e Horários:</h3>
+            <div *ngFor="let item of os.datasHorarios; let i = index" class="row marginzero">
+              <div class="label padzero">Data:</div>
+              <div class="input padzero">
+                <input [disabled]="disabled" [(ngModel)]="item.data" type="date" />
+              </div>
+
+              <div class="label padzero">Horário de Início:</div>
+              <div class="input padzero">
+                <input [disabled]="disabled" [(ngModel)]="item.horaInicio" type="time" />
+              </div>
+
+              <div class="label padzero">Horário de Término:</div>
+              <div class="input padzero">
+                <input [disabled]="disabled" [(ngModel)]="item.horaFim" type="time" />
+              </div>
+
+              <button style="z-index: 99999999;" class="btn btn-danger" *ngIf="!disabled"
+                (click)="removerDataHorario(i)">Remover</button>
             </div>
-        
-            <div class="label padzero">Horário de Início:</div>
-            <div class="input padzero">
-              <input [(ngModel)]="item.horaInicio" type="time" />
-            </div>
-        
-            <div class="label padzero">Horário de Término:</div>
-            <div class="input padzero">
-              <input [(ngModel)]="item.horaFim" type="time" />
-            </div>
-        
-            <button class="btn btn-danger" (click)="removerDataHorario(i)">Remover</button>
+
+            <!-- Botão para adicionar nova data -->
+            <button style="z-index: 9999999999;" class="btn btn-outline" *ngIf="!disabled"
+              (click)="adicionarDataHorario()">Adicionar Dia</button>
           </div>
-        
-          <!-- Botão para adicionar nova data -->
-          <button class="btn btn-outline" (click)="adicionarDataHorario()">Adicionar Dia</button>
         </div>
-</div>
 
         <div *ngIf="isEditando" class="row marginzero">
           <div class="label" class="label padzero">
             Quantidade de Participantes:
           </div>
           <div class="input" class="input padzero">
-            <input
-              [(ngModel)]="os.quantidadeParticipantes"
-              type="number"
-              id="quantidadeParticipantes"
-            />
+            <input [disabled]="disabled" [(ngModel)]="os.quantidadeParticipantes" type="number"
+              id="quantidadeParticipantes" />
           </div>
         </div>
         <div *ngIf="isEditando" class="row marginzero">
           <div class="label" class="label padzero">Carga Horária:</div>
           <div class="input" class="input padzero">
-            <input
-              [(ngModel)]="os.cargaHoraria"
-              type="number"
-              id="cargaHoraria"
-            />
+            <input [disabled]="disabled" [(ngModel)]="os.cargaHoraria" type="number" id="cargaHoraria" />
           </div>
         </div>
         <div class="row" class="row marginzero">
           <div class="label">Modalidade:</div>
           <div class="input" class="input padzero">
-            <select [(ngModel)]="os.modalidade" id="modalidade">
+            <select [disabled]="disabled" [(ngModel)]="os.modalidade" id="modalidade">
               <option value="Presencial">Presencial</option>
+              <option value="Hibrido">Híbrido</option>
+              <option value="Ead">EAD</option>
               <option value="Online">Online</option>
+              <!-- <option value="ONLINE">Online</option>
               <option value="Híbrido">Híbrido</option>
-              <option value="EAD">EAD</option>
+              <option value="EAD">EAD</option> -->
             </select>
           </div>
         </div>
         <div class="row" class="row marginzero">
           <div class="label" class="label padzero">Demanda:</div>
           <div class="input" class="input padzero">
-            <select [(ngModel)]="os.demanda" id="demanda">
+            <select [disabled]="disabled" [(ngModel)]="os.demanda" id="demanda">
+              <!-- <option value="Interna">Interna</option>
+              <option value="Externa">Externa</option>
+              <option value="Capacitação">Capacitação</option>
+              <option value="Outra Demanda">Outra Demanda</option> -->
               <option value="Interna">Interna</option>
               <option value="Externa">Externa</option>
               <option value="Capacitação">Capacitação</option>
-              <option value="Outra Demanda">Outra Demanda</option>
+              <option value="OUTRA_DEMANDA">Outra Demanda</option>
 
 
             </select>
@@ -242,12 +214,7 @@
         <div class="row" class="row marginzero">
           <div class="label" class="label padzero">Coordenador Geral:</div>
           <div class="input" class="input padzero">
-            <input
-              type="text"
-              id="coordenadoriaApoioInstitucional"
-              value="Marcos José da Silva"
-              disabled
-            />
+            <input type="text" id="coordenadoriaApoioInstitucional" value="Marcos José da Silva" disabled />
           </div>
         </div>
         <div class="row" class="row marginzero">
@@ -255,12 +222,7 @@
             Coordenadoria de Apoio Institucional:
           </div>
           <div class="input" class="input padzero">
-            <input
-              type="text"
-              id="coordenadoriaApoioInstitucional"
-              value="Carlos Arantes"
-              disabled
-            />
+            <input type="text" id="coordenadoriaApoioInstitucional" value="Carlos Arantes" disabled />
           </div>
         </div>
         <div class="row" class="row marginzero">
@@ -268,10 +230,7 @@
             Coordenadoria de Capacitação:
           </div>
           <div class="input" class="input padzero">
-            <select
-              [(ngModel)]="os.coordenadorAcaoCapacitacao"
-              id="coordenadoriaCapacitacao"
-            >
+            <select [disabled]="disabled" [(ngModel)]="os.coordenadorAcaoCapacitacao" id="coordenadoriaCapacitacao">
               <option value="Marina Spinelli">Marina Spinelli</option>
               <option value="Clenilda Poletto">Clenilda Poletto</option>
               <option value="Marina Spinelli e Clenilda Poletto">Marina Spinelli e Clenilda Poletto</option>
@@ -279,104 +238,89 @@
           </div>
         </div>
 
- <!-- Seção para Apoio Coordenadoria -->
-<div class="row marginzero">
-  <h3 style="margin-left: 0px; font-size: 20px; font-weight: bold; margin-bottom: 10px;">
-    Apoio Coordenadoria:
-  </h3>
-  <div *ngFor="let item of os.coordenacaoApoioAcao; let i = index" class="row marginzero">
-    <div class="input padzero">
-      <label for="coordenacaoApoioAcao">Selecione:</label>
-      <select [(ngModel)]="os.coordenacaoApoioAcao[i]" id="coordenacaoApoioAcao">
-        <option *ngFor="let select of selectsCoordenacaoApoio" [value]="select">{{ select }}</option>
-      </select>
-    </div>
-    <button class="btn btn-danger" (click)="removerCoordenacaoApoio(i)">Remover</button>
-  </div>
-  <!-- Botão para adicionar nova entrada -->
-  <button class="btn btn-outline" (click)="adicionarCoordenacaoApoio()">Adicionar Coordenação</button>
-</div>
+        <!-- Seção para Apoio Coordenadoria -->
+        <div class="row marginzero">
+          <h3 style="margin-left: 0px; font-size: 20px; font-weight: bold; margin-bottom: 10px;">
+            Apoio Coordenadoria:
+          </h3>
+          <div *ngFor="let item of os.coordenacaoApoioAcao; let i = index" class="row marginzero">
+            <div class="input padzero">
+              <label for="coordenacaoApoioAcao">Selecione:</label>
+              <select [disabled]="disabled" [(ngModel)]="os.coordenacaoApoioAcao[i]" id="coordenacaoApoioAcao">
+                <option *ngFor="let select of selectsCoordenacaoApoio" [value]="select">{{ select }}</option>
+              </select>
+            </div>
+            <button style="z-index: 99999999;" *ngIf="!disabled" class="btn btn-danger"
+              (click)="removerCoordenacaoApoio(i)">Remover</button>
+          </div>
+          <!-- Botão para adicionar nova entrada -->
+          <button *ngIf="os.coordenacaoApoioAcao.length < 4  && !disabled" style="z-index: 99999999;"
+            class="btn btn-outline" (click)="adicionarCoordenacaoApoio()">Adicionar Coordenação</button>
+        </div>
 
-<!-- Seção para Coordenação de Apoio Operacional -->
-<div class="row marginzero">
-  <h3 style="margin-left: 0px; font-size: 20px; font-weight: bold; margin-bottom: 10px;">
-    Coordenação de Apoio Operacional:
-  </h3>
-  <div *ngFor="let item of os.coordenacaoApoioOperacional; let i = index" class="row marginzero">
-    <div class="input padzero">
-      <label for="coordenacaoApoioOperacional">Selecione:</label>
-      <select [(ngModel)]="os.coordenacaoApoioOperacional[i]" id="coordenacaoApoioOperacional">
-        <option *ngFor="let opcao of opcoesOperacional" [value]="opcao">{{ opcao }}</option>
-      </select>
-    </div>
-    <button class="btn btn-danger" (click)="removerCoordenacaoOperacional(i)">Remover</button>
-  </div>
-  <!-- Botão para adicionar nova entrada -->
-  <button class="btn btn-outline" (click)="adicionarCoordenacaoOperacional()">Adicionar Coordenação</button>
-</div>
+        <!-- Seção para Coordenação de Apoio Operacional -->
+        <div class="row marginzero">
+          <h3 style="margin-left: 0px; font-size: 20px; font-weight: bold; margin-bottom: 10px;">
+            Coordenação de Apoio Operacional:
+          </h3>
+          <div *ngFor="let item of os.coordenacaoApoioOperacional; let i = index" class="row marginzero">
+            <div class="input padzero">
+              <label for="coordenacaoApoioOperacional">Selecione:</label>
+              <select [disabled]="disabled" [(ngModel)]="os.coordenacaoApoioOperacional[i]"
+                id="coordenacaoApoioOperacional">
+                <option *ngFor="let opcao of opcoesOperacional" [value]="opcao">{{ opcao }}</option>
+              </select>
+            </div>
+            <button style="z-index: 99999999;" *ngIf="!disabled" class="btn btn-danger"
+              (click)="removerCoordenacaoOperacional(i)">Remover</button>
+          </div>
+          <!-- Botão para adicionar nova entrada -->
+          <button style="z-index: 99999999;" *ngIf="os.coordenacaoApoioOperacional.length < 4 && !disabled"
+            class="btn btn-outline" (click)="adicionarCoordenacaoOperacional()">Adicionar Coordenação</button>
+        </div>
 
 
         <div class="row" [ngClass]="imprimir ? 'espacoImprimir' : ''">
           <div class="label" class="label padzero">Equipe Técnica:</div>
-          <div
-            class="organizarChecks"
-            style="
+          <div class="organizarChecks" style="
               display: flex;
               justify-content: space-between;
               padding-top: 5px;
               padding-bottom: 5px;
-            "
-          >
-          <label class="organizarChecks"
-          ><input
-            [(ngModel)]="equip1"
-            type="checkbox"
-            (click)="tess()"
-            id="equip1"
-          />Criar link</label
-        >
-            <label class="organizarChecks"
-              ><input
-                [(ngModel)]="equip2"
-                type="checkbox"
-                id="equip2"
-              />Elaborar e encaminhar avaliação</label
-            >
-            <label class="organizarChecks"
-              ><input
-                [(ngModel)]="equip3"
-                type="checkbox"
-                id="equip3"
-              />Emitir Certificado</label
-            >
-            <label class="organizarChecks"
-              ><input
-                [(ngModel)]="equip4"
-                type="checkbox"
-                id="equip4"
-              />Emitir Relatório Final</label
-            >
+            ">
+            <label class="organizarChecks"><input [disabled]="disabled" [(ngModel)]="equip1" type="checkbox"
+                (click)="tess()" id="equip1" />Criar Link</label>
+            <label class="organizarChecks"><input [disabled]="disabled" [(ngModel)]="equip2" type="checkbox"
+                id="equip2" />Elaborar e
+              Encaminhar Avaliação</label>
+            <label class="organizarChecks"><input [disabled]="disabled" [(ngModel)]="equip3" type="checkbox"
+                id="equip3" />Emitir
+              Certificado</label>
+            <label class="organizarChecks"><input [disabled]="disabled" [(ngModel)]="equip4" type="checkbox"
+                id="equip4" />Emitir Relatório
+              Final</label>
           </div>
         </div>
-        <div class="row" class="row marginzero">
+        <div class="row marginzero">
           <div class="label" class="label padzero">Equipe Jurídica:</div>
-            <label class="organizarChecks"
-            ><input  
-              [(ngModel)]="equipeJuridica"
-              type="checkbox"
-              id="equipeJuridica"
-            />Elaborar Termo de Referência</label
-          >
+          <label class="organizarChecks"><input [disabled]="disabled" [(ngModel)]="os.equipeJuridica" type="checkbox"
+              id="equipeJuridica" />Elaborar Termo de Referência</label>
 
         </div>
+
+        <div class="row marginzero">
+          <div style="min-width: 300px;" class="label padzero">Equipe Ação Educacional:</div>
+          <label class="organizarChecks">
+            <input [disabled]="disabled" [(ngModel)]="os.equipeEdu" type="checkbox" id="equipeAcao"
+              (click)="salvarCheckMatriz()" />Elaborar
+            Matriz de Responsabilidade
+          </label>
+        </div>
+
         <div class="row" class="row marginzero">
           <div class="label" class="label padzero">Observação:</div>
           <div class="input" class="input padzero">
-            <textarea
-              [(ngModel)]="os.observacao"
-              id="observacao"
-              rows="3"
-            ></textarea>
+            <textarea [disabled]="disabled" [(ngModel)]="os.observacao" id="observacao" rows="3"></textarea>
           </div>
         </div>
         <div class="row" class="row marginzero">
@@ -384,56 +328,58 @@
             Ordem de Serviço elaborada por:
           </div>
           <div class="input" class="input padzero">
-            <input
-              [(ngModel)]="os.osElaboradaPor"
-              type="text"
-              id="ordemServicoPor"
-            />
+            <input [disabled]="disabled" [(ngModel)]="os.osElaboradaPor" type="text" id="ordemServicoPor" />
           </div>
         </div>
-        <div class="row" class="row marginzero">
-          <div class="label" class="label padzero">Local:</div>
-          <div class="input" class="input padzero">
-            <input [(ngModel)]="os.local" type="text" id="local" />
+
+        <div class="row marginzero">
+          <div class="label padzero">Local:</div>
+          <div class="input padzero">
+
+            <select [disabled]="disabled" id="locais !important" [(ngModel)]="os.local">
+              <option value="Auditório 'Lenine de Campos Póvoas' - Escola Superior de Contas">Auditório 'Lenine de
+                Campos Póvoas' - Escola Superior de Contas</option>
+              <option value="Espaço Cultural Liu Arruda">Espaço Cultural Liu Arruda</option>
+              <option value="Sala 01 - Videoconferência">Sala 01 - Videoconferência</option>
+              <option value="Sala 02 - Mesa Técnica">Sala 02 - Mesa Técnica</option>
+              <option value="Sala 03">Sala 03</option>
+              <option value="Sala 04">Sala 04</option>
+              <option value="Sala 05">Sala 05</option>
+              <option value="Sala 06">Sala 06</option>
+            </select>
           </div>
         </div>
+
+
+
         <div class="row" class="row marginzero">
           <div class="label" class="label padzero">Público-alvo:</div>
           <div class="input" class="input padzero">
-            <textarea
-            [(ngModel)]="os.tituloEvento"
-            type="text"
-            id="tituloEvento"
-            rows="3"
-          ></textarea>
+            <textarea [disabled]="disabled" [(ngModel)]="os.publicoAlvo" type="text" id="tituloEvento"
+              rows="3"></textarea>
           </div>
         </div>
 
-        <div
-          class="column"
-          style="display: flex; width: 100%; justify-content: space-around"
-        >
-          <button
-            class="btn btn-outline"
-            style="z-index: 999"
-            *ngIf="!imprimir"
-            (click)="this.imprimir = true; salvarRelatorio2('os')"
-          >
-          Gerar Documento
+        <div class="column" style="display: flex; width: 100%; justify-content: space-around">
+          <button class="btn btn-outline" style="z-index: 999" *ngIf="!imprimir"
+            (click)="this.imprimir = true; salvarRelatorio2('os')">
+            Gerar Documento
           </button>
 
-          <button
-            class="btn btn-primary"
-            *ngIf="!imprimir"
-            (click)="
+          <button class="btn btn-outline" style="z-index: 999" *ngIf="!imprimir"
+            (click)=" this.imprimir = true; salvarRelatorio2('os')">
+            Enviar Documento por Email
+          </button>
+
+
+          <button class="btn btn-primary" *ngIf="!imprimir && !disabled" (click)="
               salvaCurso();
               scrollUp();
               exibirMenuOS = false;
               (!exibirTr);
               (exibirOs);
-            "
-          >
-          Confirmar/Salvar
+            ">
+            Confirmar/Salvar
           </button>
           <button class="btn btn-danger" *ngIf="!imprimir" (click)="fechar()">
             Cancelar
@@ -443,74 +389,54 @@
 
       <!-- PAGINA TERMO REFERENCIA -->
 
-      <div class="info-table" *ngIf="exibirTr" style="margin-left: 252px !important;"> 
+      <div class="info-table" *ngIf="exibirTr" style="margin-left: 252px !important;">
         <h1 style="margin-left: 250px !important;">Termo de Referência Nº {{ os.id }}/2024</h1>
         <div class="info-table">
           <div class="row marginzero">
             <div class="label padzero">ESC:</div>
             <div class="input padzero">
-              <input
-                type="text"
-                id="esc"
-                name="esc"
-                [(ngModel)]="termoRecisao.esc"
-              />
+              <input [disabled]="disabled" type="text" id="esc" name="esc" [(ngModel)]="termoRecisao.esc" />
             </div>
           </div>
           <div class="row marginzero">
             <div class="label padzero">Categoria de Investimento:</div>
             <div class="input padzero">
-              <input
-                type="text"
-                id="categoria"
-                name="categoria"
-                [(ngModel)]="termoRecisao.categoria"
-              />
+              <input [disabled]="disabled" type="text" id="categoria" name="categoria"
+                [(ngModel)]="termoRecisao.categoria" />
             </div>
           </div>
           <div class="row" class="row marginzero">
             <div class="label">Modalidade:</div>
             <div class="input" class="input padzero">
-              <select [(ngModel)]="os.modalidade" id="modalidade">
+              <select [disabled]="disabled" [(ngModel)]="os.modalidade" id="modalidade">
                 <option value="Presencial">Presencial</option>
                 <option value="Online">Online</option>
                 <option value="Híbrido">Híbrido</option>
                 <option value="EAD">EAD</option>
-                <option value="Nenhum">Nenhum</option>
               </select>
             </div>
           </div>
+
+
+
           <div class="row marginzero">
             <div class="label padzero">Anexo:</div>
             <div class="input padzero">
-              <input
-                type="text"
-                id="anexo"
-                name="anexo"
-                [(ngModel)]="termoRecisao.anexo"
-              />
+              <input [disabled]="disabled" type="text" id="anexo" name="anexo" [(ngModel)]="termoRecisao.anexo" />
             </div>
           </div>
           <div class="row marginzero">
             <div class="label padzero">Objeto:</div>
             <div class="input padzero">
-              <textarea
-                id="objeto"
-                name="objeto"
-                rows="4"
-                [(ngModel)]="termoRecisao.objeto"
-              ></textarea>
+              <textarea [disabled]="disabled" id="objeto" name="objeto" rows="4"
+                [(ngModel)]="termoRecisao.objeto"></textarea>
             </div>
           </div>
           <div class="row marginzero">
             <div class="label padzero">Justificativa da Contratação:</div>
             <div class="input padzero">
-              <textarea
-                id="justificativa"
-                name="justificativa"
-                rows="4"
-                [(ngModel)]="termoRecisao.justificativa"
-              ></textarea>
+              <textarea [disabled]="disabled" id="justificativa" name="justificativa" rows="4"
+                [(ngModel)]="termoRecisao.justificativa"></textarea>
             </div>
           </div>
           <div class="row marginzero">
@@ -518,34 +444,22 @@
               Modalidade de Licitação (Inexigibilidade ou dispensa):
             </div>
             <div class="input padzero">
-              <input
-                type="text"
-                id="modalidade_licitacao"
-                name="modalidade_licitacao"
-                [(ngModel)]="termoRecisao.modalidadeLicitacao"
-              />
+              <input [disabled]="disabled" type="text" id="modalidade_licitacao" name="modalidade_licitacao"
+                [(ngModel)]="termoRecisao.modalidadeLicitacao" />
             </div>
           </div>
           <div class="row marginzero">
             <div class="label padzero">Do Investimento:</div>
             <div class="input padzero">
-              <textarea
-                id="investimento"
-                name="investimento"
-                rows="4"
-                [(ngModel)]="termoRecisao.investimento"
-              ></textarea>
+              <textarea [disabled]="disabled" id="investimento" name="investimento" rows="4"
+                [(ngModel)]="termoRecisao.investimento"></textarea>
             </div>
           </div>
           <div class="row marginzero">
             <div class="label padzero">Especificações e Valores Estimados:</div>
             <div class="input padzero">
-              <textarea
-                id="especificacoes"
-                name="especificacoes"
-                rows="4"
-                [(ngModel)]="termoRecisao.especificacoes"
-              ></textarea>
+              <textarea [disabled]="disabled" id="especificacoes" name="especificacoes" rows="4"
+                [(ngModel)]="termoRecisao.especificacoes"></textarea>
             </div>
           </div>
           <div class="row marginzero">
@@ -553,67 +467,43 @@
               Ementa; Conteúdo Programático; Docentes e Cronograma:
             </div>
             <div class="input padzero">
-              <textarea
-                id="ementa"
-                name="ementa"
-                rows="4"
-                [(ngModel)]="termoRecisao.ementa"
-              ></textarea>
+              <textarea [disabled]="disabled" id="ementa" name="ementa" rows="4"
+                [(ngModel)]="termoRecisao.ementa"></textarea>
             </div>
           </div>
           <div class="row marginzero">
             <div class="label padzero">Das Obrigações do Contratante:</div>
             <div class="input padzero">
-              <textarea
-                id="obrigacoes_contratante"
-                name="obrigacoes_contratante"
-                rows="4"
-                [(ngModel)]="termoRecisao.obrigacoesContratante"
-              ></textarea>
+              <textarea [disabled]="disabled" id="obrigacoes_contratante" name="obrigacoes_contratante" rows="4"
+                [(ngModel)]="termoRecisao.obrigacoesContratante"></textarea>
             </div>
           </div>
           <div class="row marginzero">
             <div class="label padzero">Das Obrigações do Contratada:</div>
             <div class="input padzero">
-              <textarea
-                id="obrigacoes_contratada"
-                name="obrigacoes_contratada"
-                rows="4"
-                [(ngModel)]="termoRecisao.obrigacoesContratada"
-              ></textarea>
+              <textarea [disabled]="disabled" id="obrigacoes_contratada" name="obrigacoes_contratada" rows="4"
+                [(ngModel)]="termoRecisao.obrigacoesContratada"></textarea>
             </div>
           </div>
           <div class="row marginzero">
             <div class="label padzero">Das Sanções:</div>
             <div class="input padzero">
-              <textarea
-                id="sancoes"
-                name="sancoes"
-                rows="4"
-                [(ngModel)]="termoRecisao.sancoes"
-              ></textarea>
+              <textarea [disabled]="disabled" id="sancoes" name="sancoes" rows="4"
+                [(ngModel)]="termoRecisao.sancoes"></textarea>
             </div>
           </div>
           <div class="row marginzero">
             <div class="label padzero">Da Dotação Orçamentária:</div>
             <div class="input padzero">
-              <textarea
-                id="dotacao_orcamentaria"
-                name="dotacao_orcamentaria"
-                rows="4"
-                [(ngModel)]="termoRecisao.dotacaoOrcamentaria"
-              ></textarea>
+              <textarea [disabled]="disabled" id="dotacao_orcamentaria" name="dotacao_orcamentaria" rows="4"
+                [(ngModel)]="termoRecisao.dotacaoOrcamentaria"></textarea>
             </div>
           </div>
           <div class="row marginzero">
             <div class="label padzero">Condições de Pagamento:</div>
             <div class="input padzero">
-              <textarea
-                id="condicoes_pagamento"
-                name="condicoes_pagamento"
-                rows="4"
-                [(ngModel)]="termoRecisao.condicoesPagamento"
-              ></textarea>
+              <textarea [disabled]="disabled" id="condicoes_pagamento" name="condicoes_pagamento" rows="4"
+                [(ngModel)]="termoRecisao.condicoesPagamento"></textarea>
             </div>
           </div>
           <div class="row marginzero">
@@ -621,12 +511,8 @@
               Documentos Relativos à Regularidade Fiscal e Trabalhista:
             </div>
             <div class="input padzero">
-              <textarea
-                id="documentos_regularidade"
-                name="documentos_regularidade"
-                rows="4"
-                [(ngModel)]="termoRecisao.documentosRegularidade"
-              ></textarea>
+              <textarea [disabled]="disabled" id="documentos_regularidade" name="documentos_regularidade" rows="4"
+                [(ngModel)]="termoRecisao.documentosRegularidade"></textarea>
             </div>
           </div>
           <div class="row marginzero">
@@ -635,12 +521,8 @@
               <button class="btn btn-danger btn-sm">x</button>
             </div>
             <div class="input padzero">
-              <textarea
-                id="contrato"
-                name="contrato"
-                rows="4"
-                [(ngModel)]="termoRecisao.contrato"
-              ></textarea>
+              <textarea [disabled]="disabled" id="contrato" name="contrato" rows="4"
+                [(ngModel)]="termoRecisao.contrato"></textarea>
             </div>
           </div>
           <div class="row marginzero">
@@ -648,54 +530,28 @@
               Do Acompanhamento e da Fiscalização:
             </div>
             <div class="input padzero">
-              <textarea
-                id="acompanhamento"
-                name="acompanhamento"
-                rows="4"
-                [(ngModel)]="termoRecisao.acompanhamento"
-              ></textarea>
+              <textarea [disabled]="disabled" id="acompanhamento" name="acompanhamento" rows="4"
+                [(ngModel)]="termoRecisao.acompanhamento"></textarea>
             </div>
           </div>
           <div class="row marginzero">
             <div class="label padzero">Dados do Contratado:</div>
             <div class="input padzero">
-              <input
-                type="text"
-                id="nome_assinante"
-                name="nome_assinante"
-                placeholder="Nome do assinante"
-                value="Marcos Jose da Silva"
-                [(ngModel)]="termoRecisao.nomeAssinante"
-              />
-              <input
-                type="text"
-                id="cargo_assinante"
-                name="cargo_assinante"
-                placeholder="Cargo do assinante"
-                value="Coordenador Geral da Escola Superior de Contas"
-                [(ngModel)]="termoRecisao.cargoAssinante"
-              />
+              <input [disabled]="disabled" type="text" id="nome_assinante" name="nome_assinante"
+                placeholder="Nome do assinante" value="Marcos Jose da Silva" [(ngModel)]="termoRecisao.nomeAssinante" />
+              <input [disabled]="disabled" type="text" id="cargo_assinante" name="cargo_assinante"
+                placeholder="Cargo do assinante" value="Coordenador Geral da Escola Superior de Contas"
+                [(ngModel)]="termoRecisao.cargoAssinante" />
             </div>
           </div>
         </div>
 
-        <div
-          class="column"
-          style="display: flex; width: 100%; justify-content: space-around"
-          *ngIf="!imprimir"
-        >
-          <button
-            class="btn btn-outline"
-            style="z-index: 999"
-            *ngIf="!imprimir"
-            (click)="this.imprimir = true; salvarRelatorio2('tr')"
-          >
-          Gerar Documento
+        <div class="column" style="display: flex; width: 100%; justify-content: space-around" *ngIf="!imprimir">
+          <button class="btn btn-outline" style="z-index: 999" *ngIf="!imprimir"
+            (click)="this.enviaEmail = true;this.imprimir = true; salvarRelatorio2('tr')">
+            Gerar Documento
           </button>
-          <button
-            class="btn btn-primary"
-            (click)="os.tr = termoRecisao;  salvaTr(); scrollUp()"
-          >
+          <button class="btn btn-primary" (click)="os.tr = termoRecisao;  salvaTr(); scrollUp()">
             Confirmar/Salvar
           </button>
           <button class="btn btn-danger" (click)="proximaPaginaOs();">
@@ -703,6 +559,658 @@
           </button>
         </div>
       </div>
+
+
+
+
+      <!-- PAGINA MATRIZ RESPONSABILIDADE -->
+
+      <div *ngIf="exibirMr" class="info-table" style="margin-left: 400px !important;">
+        <h1>Matriz de Responsabilidade N.º{{ os.id }}/2024</h1>
+
+        <!-- Tema -->
+
+        <div class="row marginzero">
+          <div class="label padzero">Tema:</div>
+          <div class="input padzero">
+            <textarea [(ngModel)]="os.tituloEvento" type="text" id="tituloEvento" disabled></textarea>
+          </div>
+        </div>
+        <button style="position: fixed;
+        top: 20px; 
+        right: 20px; 
+        z-index: 1000;">
+          <span>\/</span>
+        </button>
+        <!-- Objetivo -->
+
+        <div class="row marginzero">
+          <div class="label padzero">Objetivo:</div>
+          <div class="input padzero">
+            <textarea [disabled]="disabled" [(ngModel)]="os.objetivo" type="text" id="objetivo" rows="5"></textarea>
+          </div>
+        </div>
+
+        <!-- Público-alvo -->
+
+        <div class="row" class="row marginzero">
+          <div class="label" class="label padzero">Público-alvo:</div>
+          <div class="input" class="input padzero">
+            <textarea [disabled]="disabled" [(ngModel)]="os.publicoAlvo" type="text" id="publicoAlvo"
+              rows="5"></textarea>
+          </div>
+        </div>
+
+
+        <h3 style="margin-left: 26px;font-size:20px; font-weight: bold ;margin-bottom: 10px;">Datas e Horários:</h3>
+        <div *ngFor="let item of os.datasHorarios; let i = index" class="row marginzero">
+          <div class="label padzero">Data:</div>
+          <div class="input padzero">
+            <input [(ngModel)]="item.data" type="date" disabled />
+          </div>
+
+          <div class="label padzero">Horário de Início:</div>
+          <div class="input padzero">
+            <input [(ngModel)]="item.horaInicio" type="time" disabled />
+          </div>
+
+          <div class="label padzero">Horário de Término:</div>
+          <div class="input padzero">
+            <input [(ngModel)]="item.horaFim" type="time" disabled />
+          </div>
+        </div>
+
+
+        <div class="row" class="row marginzero">
+          <div class="label" class="label padzero">Local:</div>
+          <div class="input" class="input padzero">
+            <input [(ngModel)]="os.local" type="text" id="local" value="os.local" disabled />
+          </div>
+        </div>
+
+
+        <div *ngIf="isEditando" class="row marginzero">
+          <div class="label" class="label padzero">
+            Público previsto:
+          </div>
+          <div class="textarea" class="input padzero">
+            <input [disabled]="disabled" type="number" [(ngModel)]="os.publicoPrevisto" id="publicoPrevisto"
+              row="0 !important" value="os.publicoPrevisto">
+
+          </div>
+        </div>
+
+        <div class="row" class="row marginzero">
+          <div class="label" class="label padzero">
+            Link de inscrição:
+          </div>
+          <div class="input" class="input padzero">
+            <input [disabled]="disabled" [(ngModel)]="os.linkinscricao" type="text" id="linkinscricao">
+          </div>
+        </div>
+
+
+        <div *ngIf="isEditando" class="row marginzero">
+          <div class="label" class="label padzero">Carga Horária:</div>
+          <div class="input" class="input padzero">
+            <input [(ngModel)]="os.cargaHoraria" type="number" id="cargaHoraria" disabled />
+          </div>
+        </div>
+        <div class="row" class="row marginzero">
+          <div class="label">Modalidade:</div>
+          <div class="input" class="input padzero">
+            <input [(ngModel)]="os.modalidade" id="modalidade" value="os.modalidade" disabled>
+          </div>
+        </div>
+
+        <div class="row marginzero">
+          <div class="label padzero">Demanda:</div>
+          <div class="input padzero">
+            <textarea [(ngModel)]="os.demanda" id="demanda" row="0" value="os.demanda" disabled>
+          </textarea>
+          </div>
+        </div>
+
+
+        <div class="row" class="row marginzero">
+          <div class="label" class="label padzero">Coordenador Geral:</div>
+          <div class="input" class="input padzero">
+            <input type="text" id="coordenadorGeral" value="Marcos José da Silva" rows="1" disabled />
+          </div>
+        </div>
+        <div class="row" class="row marginzero">
+          <div class="label" class="label padzero">
+            Coordenadoria de Apoio Institucional:
+          </div>
+          <div class="input" class="input padzero">
+            <input type="text" id="coordenadoriaApoioInstitucional" value="Carlos Arantes" disabled />
+          </div>
+        </div>
+        <div class="row" class="row marginzero">
+          <div class="label" class="label padzero">
+            Coordenadoria de Capacitação do TCE-MT:
+          </div>
+          <div class="input" class="input padzero">
+            <input type="text" value="Marina Bressane Spinelli" disabled>
+          </div>
+        </div>
+
+
+        <div class="row" class="row marginzero">
+          <div class="label" class="label padzero">
+            Coordenadoria de Administração Municipal:
+          </div>
+          <div class="input" class="input padzero">
+            <input type="text" value="Clenilda Poletto" disabled>
+          </div>
+        </div>
+
+
+        <!-- Seção para Apoio Coordenadoria -->
+        <div class="row marginzero" style=" margin-left: 20px;">
+          <h3 style="margin-left: 0px; font-size: 20px; font-weight: bold; margin-bottom: 10px;">
+            Apoio Coordenadoria:
+          </h3>
+          <div *ngFor="let item of os.coordenacaoApoioAcao; let i = index" class="row marginzero">
+            <div class="input padzero">
+              <select [disabled]="disabled" [(ngModel)]="os.coordenacaoApoioAcao[i]" id="coordenacaoApoioAcao" disabled>
+                <option *ngFor="let select of selectsCoordenacaoApoio" [value]="select">{{ select }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row" class="row marginzero"> <!--AJUSTAR OBSERVACAO USANO CHECKBOX-->
+          <div class="label" class="label padzero">Observação:</div>
+          <div class="input" class="input padzero">
+            <textarea [disabled]="disabled" [(ngModel)]="os.observacao" id="observacao" rows="3"></textarea>
+          </div>
+        </div>
+
+        <!-- DESCRICAO ATRIBUICOES -->
+
+        <style>
+          textarea {
+            border-color: #bcbcbc;
+          }
+
+          textarea::-webkit-scrollbar {
+            width: 3px;
+            /* Set the width of the scrollbar */
+          }
+
+          textarea::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            /* Color of the scrollbar track */
+          }
+
+          textarea::-webkit-scrollbar-thumb {
+            background: #888;
+            /* Color of the scrollbar thumb */
+            border-radius: 10px;
+            /* Round the scrollbar thumb */
+          }
+
+          textarea::-webkit-scrollbar-thumb:hover {
+            background: #555;
+            /* Color of the thumb on hover */
+          }
+
+          .container {
+            width: 80%;
+            margin: 0 auto;
+          }
+
+          h1 {
+            text-align: center;
+            margin-bottom: 20px;
+          }
+
+          table {
+            width: 100%;
+            border-collapse: collapse;
+          }
+
+          th,
+          td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+          }
+
+          th {
+            background-color: #f2f2f2;
+          }
+
+          .responsavel {
+            display: flex;
+            flex-direction: column;
+            width: auto;
+          }
+
+          input[type="text"] {
+            width: 100%;
+            padding: 5px;
+            margin: 0;
+            box-sizing: border-box;
+          }
+
+          textarea {
+            width: 100%;
+          }
+
+          .textareaSize {
+            width: 100%;
+            height: auto;
+          }
+
+          span {
+            font-weight: bold;
+          }
+        </style>
+        <div>
+          <h1>Descrição das Atribuições</h1>
+          <table>
+            <tr>
+              <th>Unidade Responsável</th>
+              <th>Atribuições</th>
+            </tr>
+            <tr>
+              <td class="responsavel">
+                <span>Presidente</span>
+                <input [(ngModel)]="os.nome_presidente26" type="text" name="nome_presidente1"
+                  value="Sérgio Ricardo de Almeida " disabled>
+              </td>
+              <td><textarea [(ngModel)]="os.atribuicoes23" type="text" name="atribuicoes1" rows="10"
+                  class="textareaSize" disabled>
+•Validar a Ação Educacional; 
+•Assinar ofícios para Prefeitos e Secretários de Saúde e demais •Autoridades, em conjunto com Gabinete do Conselheiro Guilherme Maluf; 
+•Assinar CI/Convite para participação de Conselheiros e Procuradores, em conjunto com Gabinete do Conselheiro Guilherme Maluf; 
+•Autorizar as despesas inerentes da Ação Educacional.</textarea></td>
+            </tr>
+            <tr>
+              <td class="responsavel">
+                <span>Gabinete da Presidência</span>
+                <input [(ngModel)]="os.nome_presidente25" type="text" name="nome_presidente2" value="Paula Pietro "
+                  disabled>
+              </td>
+              <td><textarea [(ngModel)]="os.atribuicoes22" type="text" name="atribuicoes2" value="" rows="4"
+                  class="textareaSize" disabled>
+•Acompanhar a execução da Ação Educacional junto à Comissão Permanente de Saúde e Assistência Social do TCE-MT; 
+•Confirmar a participação do Presidente na abertura da Cerimônia.</textarea></td>
+            </tr>
+            <tr>
+              <td class="responsavel">
+                <span>Secretaria Geral da Presidência</span>
+                <input [(ngModel)]="os.nome_presidente24" type="text" name="nome_presidente3"
+                  value="Nilson Fernando Gomes Bezerra " disabled>
+              </td>
+              <td><textarea [(ngModel)]="os.atribuicoes21" type="text" rows="1" class="textareaSize"
+                  disabled>Para conhecimento e participação.</textarea></td>
+            </tr>
+          </table>
+
+          <table style="margin-top: 15px;">
+            <tr>
+              <th>GABINETE DE CONSELHEIRO – PROCURADOR DE CONTAS</th>
+              <th></th>
+            </tr>
+
+            <tr>
+              <th>Unidade Responsável</th>
+              <th>Atribuições</th>
+            </tr>
+
+            <tr>
+              <td class="responsavel">
+                <span>Gabinete Conselheiro</span>
+                <input [(ngModel)]="os.nome_presidente23" type="text" name="nome_presidente1" value="Antônio Joaquim"
+                  disabled>
+              </td>
+              <td><textarea [(ngModel)]="os.atribuicoes20" type="text" name="atribuicoes1" rows="1" class="textareaSize"
+                  disabled>Para conhecimento e participação.</textarea></td>
+            </tr>
+            <tr>
+              <td class="responsavel">
+                <span>Conselheiro Supervisor</span>
+                <input [(ngModel)]="os.nome_presidente22" type="text" name="nome_presidente2"
+                  value="Conselheiro Valter Albano" disabled>
+              </td>
+              <td><textarea [(ngModel)]="os.atribuicoes19" type="text" name="atribuicoes2" value="" rows="1"
+                  class="textareaSize" disabled>Para conhecimento e participação.</textarea></td>
+            </tr>
+
+            <tr>
+              <td class="responsavel">
+                <span>Gabinete do Conselheiro</span>
+                <input [(ngModel)]="os.nome_presidente21" type="text" name="nome_presidente3" value="Waldir Júlio Teis"
+                  disabled>
+              </td>
+              <td><textarea [(ngModel)]="os.atribuicoes18" type="text" rows="1" class="textareaSize"
+                  disabled>Para conhecimento e participação.</textarea></td>
+            </tr>
+
+            <tr>
+              <td class="responsavel">
+                <span>Gabinete do Conselheiro</span>
+                <input [(ngModel)]="os.nome_presidente20" type="text" name="nome_presidente3"
+                  value="José Carlos Novelli" disabled>
+              </td>
+              <td><textarea [(ngModel)]="os.atribuicoes18" type="text" rows="1" class="textareaSize"
+                  disabled>Para conhecimento e participação.</textarea></td>
+            </tr>
+
+            <tr>
+              <td class="responsavel">
+                <span>Gabinete do Conselheiro</span>
+                <input [(ngModel)]="os.nome_presidente19" type="text" name="nome_presidente3"
+                  value="Conselheiro Domingos Neto" disabled>
+              </td>
+              <td><textarea [(ngModel)]="os.atribuicoes17" type="text" rows="1" class="textareaSize"
+                  disabled>Para conhecimento e participação.</textarea></td>
+            </tr>
+
+            <tr>
+              <td class="responsavel">
+                <span>Procurador-geral de Contas</span>
+                <input [(ngModel)]="os.nome_presidente18" type="text" name="nome_presidente3"
+                  value="Alisson Carvalho de Alencar" disabled>
+              </td>
+              <td><textarea [(ngModel)]="os.atribuicoes16" type="text" rows="1" class="textareaSize"
+                  disabled>Para conhecimento e participação.</textarea></td>
+            </tr>
+
+            <tr>
+              <th>CONSULTORIA JURIDICA GERAL</th>
+              <th></th>
+            </tr>
+
+            <tr>
+              <th>Unidade Responsável</th>
+              <th>Atribuições</th>
+            </tr>
+            <tr>
+              <td class="responsavel">
+                <span>Consultoria Jurídica Geral</span>
+                <input [(ngModel)]="os.nome_presidente17" type="text" name="nome_presidente1"
+                  value="Grhegory Paiva Maia" disabled>
+              </td>
+              <td><textarea [(ngModel)]="os.atribuicoes15" type="text" name="atribuicoes1" rows="1" class="textareaSize"
+                  disabled>Para conhecimento.</textarea></td>
+            </tr>
+
+            <tr>
+              <th>COMISSÃO PERMANENTE DE SAÚDE E ASSISTÊNCIA SOCIAL DO TCE-MT</th>
+              <th></th>
+            </tr>
+
+
+            <tr>
+              <th>Unidade Responsável</th>
+              <th>Atribuições</th>
+            </tr>
+
+
+          </table>
+
+          <table>
+
+            <tr>
+              <td class="responsavel">
+                <span>Gabinete do Conselheiro Comissão Permanente de Saúde e Assistência Social do TCE-MT</span>
+                <input [(ngModel)]="os.nome_presidente16" type="text" name="nome_presidente1" value="Guilherme Maluf"
+                  disabled>
+              </td>
+              <td> <textarea [disabled]="disabled" [(ngModel)]="os.atribuicoes14" type="text" name="atribuicoes1"
+                  rows="25" class="textareaSize">
+•Encaminhar Termo de Referência da Ação Educacional a ESC; 
+•Definir o público do evento em conjunto com a Presidência;
+•Enviar ofícios para Prefeitos e Secretários de Saúde e demais Autoridades;  
+•Definir programação; 
+•Encaminhar programação para Comunicação para diagramação;  
+•Verificar a possibilidade de uso do Plenário do TCE-MT para transmissão do encontro; 
+•Encaminhar programação para ESC e demais unidades envolvidas;  
+•Supervisionar o planejamento e a execução da Ação Educacional; 
+•Encaminhar CI/Convite para Membros, Procuradores e todas as unidades em conjunto com o Gabinete da Presidência;  
+•Definir em conjunto com o cerimonial, o dispositivo de honra;  
+•Aprovar o roteiro em conjunto com cerimonial; 
+•Encaminhar cópias dos ofícios para a ESC e Cerimonial;  
+•Encaminhar para o Núcleo de Cerimonial cópias dos CI´s, para confirmação de presença; 
+•Encaminhar mini currículo dos painelistas a SECOM e Cerimonial;  
+•Orçar despesas da Ação Educacional; 
+•Solicitar compra de passagem e hospedagem para palestrante; 
+•Encaminhar a lista de painelistas e palestrantes que necessitarão de transporte; 
+•Encaminhar a lista de painelistas e palestrantes que irão estacionar na frente da ESC; 
+•Solicitar os slides das apresentações aos painelistas e encaminhar para ESC até o dia 31/10/2024. </textarea></td>
+            </tr>
+
+          </table>
+
+          <table>
+            <tr>
+              <th>GESTÃO EXECUTIVA</th>
+              <th></th>
+            </tr>
+
+            <tr>
+              <th>Unidade Responsável</th>
+              <th>Atribuições</th>
+            </tr>
+            <tr>
+              <td class="responsavel">
+                <span>Secretaria Executiva de Orçamento, Finanças e Contabilidade</span>
+                <input [(ngModel)]="os.nome_presidente15" type="text" name="nome_presidente1" value="Mauricio Marques"
+                  disabled>
+              </td>
+              <td><textarea [(ngModel)]="os.atribuicoes13" type="text" name="atribuicoes1" rows="2" class="textareaSize"
+                  disabled>
+•Realizar as ações financeiras e orçamentárias relativas às despesas do TCE-MT.</textarea></td>
+            </tr>
+            <tr>
+              <td class="responsavel">
+                <span>Escola Superior de Contas</span>
+                <input [disabled]="disabled" [(ngModel)]="os.nome_presidente14" type="text" name="nome_presidente1"
+                  value="Marcos José da Silva" disabled>
+                <input [disabled]="disabled" [(ngModel)]="os.nome_presidente13" type="text" name="nome_presidente1"
+                  value="Marina Pinelli" disabled style="margin-top: 5px;">
+                <input [disabled]="disabled" [(ngModel)]="os.nome_presidente12" type="text" name="nome_presidente1"
+                  value="Carlos Rubens" disabled style="margin-top: 5px;">
+                <input [disabled]="disabled" [(ngModel)]="os.nome_presidente11" type="text" name="nome_presidente1"
+                  value="Clenilda Poletto" disabled style="margin-top: 5px;">
+
+              </td>
+              <td><textarea [disabled]="disabled" [(ngModel)]="os.atribuicoes12" type="text" name="atribuicoes1"
+                  rows="25" class="textareaSize">
+•Receber a demanda da Ação Educacional;  
+•Compartilhar com o Conselheiro supervisor a demanda recebida;
+•Criar link de inscrição; 
+•Definir equipe de trabalho;  
+•Elaborar e acompanhar a matriz de responsabilidades, o checklist e demais documentos necessários; 
+•Gerenciar a ação educacional quanto aos aspectos operacionais, logísticos e de divulgação; 
+•Encaminhar diariamente a lista de inscritos para a Comissão permanente de Saúde e Assistência Social do TCE-MT; 
+•Solicitar serviço de coffee break; 
+•Organizar a montagem dos materiais da Ação Educacional: pastas, canetas e blocos de rascunho;  
+•Organizar sala de Pessoas Importantes; 
+•Solicitar Intérprete de libras; 
+•Providenciar som ambiente no foyer, durante coffee break; 
+•Solicitar canetas; 
+•Providenciar transporte dos palestrantes e painelistas; 
+•Encaminhar para o Gabinete Militar, a lista das painelistas e palestrantes para reserva espaço de estacionamento na frente da Escola; 
+•Liberar Certificado aos participantes </textarea></td>
+            </tr>
+
+
+            <tr>
+              <td class="responsavel">
+                <span>Secretaria de Tecnologia da Informação</span>
+                <input [(ngModel)]="os.nome_presidente10" type="text" name="nome_presidente1"
+                  value="André Luiz Costa Cruz" disabled>
+              </td>
+              <td><textarea [(ngModel)]="os.atribuicoes11" type="text" name="atribuicoes1" rows="5" class="textareaSize"
+                  disabled>•Disponibilizar técnicos para atendimento/suporte durante todo evento;       •Garantir velocidade/conexão adequada para transmissão e credenciamento da Ação Educacional. </textarea>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="responsavel">
+                <span>Secretaria de Comunicação Social</span>
+                <input [(ngModel)]="os.nome_presidente9" type="text" name="nome_presidente1" value="Raoni Pedroso Ricci"
+                  disabled>
+              </td>
+              <td><textarea [(ngModel)]="os.atribuicoes10" type="text" name="atribuicoes1" rows="20"
+                  class="textareaSize" disabled>•Organizar/planejar com a unidade demandante as providencias necessárias para criação das artes: Tamplates, post´s, certificados para painelistas, programação, fichas de perguntas; etc;  
+•Providenciar a diagramação da Programação;  
+•Providenciar banner´s de sinalização/identificação dos ambientes de realização da Ação Educacional; 
+•Providenciar juntamente com a empresa terceirizada a gravação e sonorização; 
+•Confeccionar material eletrônico para divulgação (e-mail marketing, post whats, tamplates, Wallpaper etc.);  
+•Confeccionar banner eletrônico e disponibilizar no site do TCE-MT;  
+•Providenciar Púlpito digital para o Auditório da ESC; 
+•Providenciar backdrop; 
+•Providenciar 10 microfones;
+•Providenciar material gráfico: Pastas, certificado dos palestrantes, blocos de rascunho; fichas de perguntas; 
+•Realizar a cobertura jornalística e fotográfica da ação educacional; 
+•Criar link do YouTube para transmissão; 
+•Providenciar transmissão via canais de comunicação do TCE-MT; 
+•Inserir transmissão para libras.</textarea></td>
+            </tr>
+            <tr>
+              <td class="responsavel">
+                <span style="margin-bottom: 10px;">Secretaria de Comunicação Social</span>
+                <input [(ngModel)]="os.nome_presidente8" type="text" name="nome_presidente1"
+                  value="Carlos Roberto Lourençon" disabled>
+                <div style="margin-top: 90px;"></div>
+                <input [(ngModel)]="os.nome_presidente7" type="text" name="nome_presidente1"
+                  value="Núcleo de Cerimonial Danielle Sarris" disabled
+                  style="display: flex; align-items: center; justify-content: center; height: auto;">
+                <div style="margin-top: 358px;"></div>
+                <input [(ngModel)]="os.nome_presidente6" type="text" name="nome_presidente1"
+                  value="Núcleo de Patrimônio Rodrigo Welter Teischmann" disabled
+                  style="display: flex; align-items: center; justify-content: center; height: auto;">
+                <div style="margin-bottom: 70px;"></div>
+                <input [(ngModel)]="os.nome_presidente5" type="text" name="nome_presidente1"
+                  value="Gerencia de Transportes Alexandre Biancardi" disabled
+                  style="display: flex; align-items: center; justify-content: center; height: auto;">
+                <div style="margin-bottom: 30px;"></div>
+
+              </td>
+              <td><textarea [(ngModel)]="os.atribuioces9" type="text" name="atribuicoes1" rows="5" class="textareaSize"
+                  disabled>
+•Providenciar serviço de coffee break; 
+•Informar ao restaurante o público previsto da Ação Educacional; 
+•Disponibilizar Intérprete de libras; 
+•Apoiar na garantia de recursos necessários</textarea>
+                <textarea [(ngModel)]="os.atribuicoes7" type="text" name="atribuicoes1" rows="15" class="textareaSize"
+                  disabled>
+•Organizar e apoiar toda logística da ação educacional e alinhamento das diretrizes com as unidades envolvidas; 
+•Definir em conjunto com o Gabinete do Conselheiro Guilherme Maluf o dispositivo de honra; 
+•Elaborar roteiro e submeter ao Gabinete do Conselheiro Guilherme Maluf para aprovação; 
+•Receber cópia das CI’s para a confirmação de presença dos Conselheiros e demais convidados que compõem mesa de honra;  
+•Confirmar via telefone a participação das autoridades e demais convidados;
+•Recepcionar e prestar informações aos participantes;  
+•Disponibilizar recepcionistas para recolhimento das perguntas; 
+•Disponibilizar Mestre Cerimônia. </textarea>
+                <textarea [(ngModel)]="os.atribuicoes6" type="text" name="atribuicoes1" rows="5" class="textareaSize"
+                  disabled>
+•Disponibilizar reforço para equipe de limpeza; 
+•Disponibilizar garçom para atender exclusivamente as autoridades; 
+•Garantir café e água em todos os ambientes da Ação Educacional; 
+•Disponibilizar equipe para movimentação dos patrimônios.</textarea>
+                <textarea [(ngModel)]="os.atribuicoes5" type="text" name="atribuicoes1" rows="3" class="textareaSize"
+                  disabled>
+•Disponibilizar veículos e motoristas para o transporte dos painelistas e palestrantes;</textarea>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="responsavel">
+                <span>Secretaria de Tecnologia da Informação</span>
+                <input [(ngModel)]="os.nome_presidente4" type="text" name="nome_presidente1"
+                  value="André Luiz Costa Cruz" disabled>
+              </td>
+              <td><textarea [(ngModel)]="os.atribuicoes4" type="text" name="atribuicoes1" rows="5" class="textareaSize"
+                  disabled>•Disponibilizar técnicos para atendimento/suporte durante todo evento;       •Garantir velocidade/conexão adequada para transmissão e credenciamento da Ação Educacional. </textarea>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="responsavel">
+                <span>Secretaria de Comunicação Social</span>
+                <input [(ngModel)]="os.nome_presidente3" type="text" name="nome_presidente1" value="Raoni Pedroso Ricci"
+                  disabled>
+              </td>
+              <td><textarea [(ngModel)]="os.atribuicoes3" type="text" name="atribuicoes1" rows="20" class="textareaSize"
+                  disabled>•Organizar/planejar com a unidade demandante as providencias necessárias para criação das artes: Tamplates, post´s, certificados para painelistas, programação, fichas de perguntas; etc;  
+•Providenciar a diagramação da Programação;  
+•Providenciar banner´s de sinalização/identificação dos ambientes de realização da Ação Educacional; 
+•Providenciar juntamente com a empresa terceirizada a gravação e sonorização; 
+•Confeccionar material eletrônico para divulgação (e-mail marketing, post whats, tamplates, Wallpaper etc.);  
+•Confeccionar banner eletrônico e disponibilizar no site do TCE-MT;  
+•Providenciar Púlpito digital para o Auditório da ESC; 
+•Providenciar backdrop; 
+•Providenciar 10 microfones;
+•Providenciar material gráfico: Pastas, certificado dos palestrantes, blocos de rascunho; fichas de perguntas; 
+•Realizar a cobertura jornalística e fotográfica da ação educacional; 
+•Criar link do YouTube para transmissão; 
+•Providenciar transmissão via canais de comunicação do TCE-MT; 
+•Inserir transmissão para libras.</textarea></td>
+            </tr>
+            <tr>
+              <td class="responsavel">
+                <span>TV Contas</span>
+                <input [(ngModel)]="os.nome_presidente2" type="text" name="nome_presidente1" value="José Mota" disabled
+                  style="display: flex; align-items: center; justify-content: center; height: auto; margin-bottom: 70px;">
+              </td>
+              <td><textarea [(ngModel)]="os.atribuicoes2" type="text" name="atribuicoes1" rows="5" class="textareaSize"
+                  disabled>
+•Produzir conteúdo de TV (entrevistas); 
+•Realizar a cobertura jornalística e fotográfica da ação educacional; 
+•Providenciar transmissão da Ação Educacional; 
+•Confeccionar filmes/vídeos para divulgação institucional. </textarea>
+            </tr>
+
+            <tr>
+              <td class="responsavel">
+                <span>Gabinete Militar</span>
+                <input [(ngModel)]="os.nome_presidente1" type="text" name="nome_presidente1"
+                  value="Hadassah Suzannah Beserra de Souza" disabled
+                  style="display: flex; align-items: center; justify-content: center; height: auto; margin-bottom: 130px;">
+              </td>
+              <td><textarea [(ngModel)]="os.atribuicoes1" type="text" name="atribuicoes1" rows="8" class="textareaSize"
+                  disabled></textarea>
+            </tr>
+
+          </table>
+
+
+
+
+
+        </div>
+
+
+
+        <div class="column" style="display: flex; width: 100%; justify-content: space-around">
+          <button class="btn btn-outline" style="z-index: 999" *ngIf="!imprimir"
+            (click)="this.imprimir = true; salvarRelatorio2('mr')">
+            Gerar Documento
+          </button>
+
+          <button class="btn btn-primary" *ngIf="!imprimir" (click)="
+            salvaCurso();
+            proximaPagina();
+            exibirMenuOS = false;
+            faseAtual = faseAtual + 1;
+            (!exibirTr);
+            (exibirOs);
+          ">
+            Confirmar/Salvar
+          </button>
+          <button class="btn btn-danger" *ngIf="!imprimir" (click)="fechar()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+
+
     </div>
   </div>
 
@@ -714,424 +1222,77 @@
       <div class="row marginzero">
         <div class="label padzero">Tema:</div>
         <div class="input padzero">
-          <textarea
-            [(ngModel)]="os.tituloEvento"
-            type="text"
-            id="tituloEvento"
-          ></textarea>
+          <textarea [disabled]="disabled" [(ngModel)]="os.tituloEvento" type="text" id="tituloEvento"></textarea>
         </div>
       </div>
       <div class="row" class="row marginzero">
         <div class="label">Modalidade:</div>
         <div class="input" class="input padzero">
-          <select [(ngModel)]="os.modalidade" id="modalidade">
+          <select [disabled]="disabled" [(ngModel)]="os.modalidade" id="modalidade">
             <option value="Presencial">Presencial</option>
             <option value="Online">Online</option>
             <option value="Híbrido">Híbrido</option>
             <option value="EAD">EAD</option>
-            <option value="Nenhum">Nenhum</option>
           </select>
         </div>
       </div>
       <div class="row" class="row marginzero">
         <div class="row marginzero">
-         <h3>Datas e Horários do Evento</h3>
-         <div *ngFor="let item of os.datasHorarios; let i = index" class="row marginzero">
-           <div class="label padzero">Data:</div>
-           <div class="input padzero">
-             <input [(ngModel)]="item.data" type="date" />
-           </div>
-       
-           <div class="label padzero">Horário de Início:</div>
-           <div class="input padzero">
-             <input [(ngModel)]="item.horaInicio" type="time" />
-           </div>
-       
-           <div class="label padzero">Horário de Término:</div>
-           <div class="input padzero">
-             <input [(ngModel)]="item.horaFim" type="time" />
-           </div>
-       
-           <button class="btn btn-danger" (click)="removerDataHorario(i)">Remover</button>
-         </div>
-       
-         <!-- Botão para adicionar nova data -->
-         <button class="btn btn-outline" (click)="adicionarDataHorario()">Adicionar Dia</button>
-       </div>
-</div>
+          <h3>Datas e Horários do Evento</h3>
+          <div *ngFor="let item of os.datasHorarios; let i = index" class="row marginzero">
+            <div class="label padzero">Data:</div>
+            <div class="input padzero">
+              <input [disabled]="disabled" [(ngModel)]="item.data" type="date" />
+            </div>
+
+            <div class="label padzero">Horário de Início:</div>
+            <div class="input padzero">
+              <input [disabled]="disabled" [(ngModel)]="item.horaInicio" type="time" />
+            </div>
+
+            <div class="label padzero">Horário de Término:</div>
+            <div class="input padzero">
+              <input [disabled]="disabled" [(ngModel)]="item.horaFim" type="time" />
+            </div>
+
+            <button class="btn btn-danger" (click)="removerDataHorario(i)">Remover</button>
+          </div>
+
+          <!-- Botão para adicionar nova data -->
+          <button class="btn btn-outline" (click)="adicionarDataHorario()">Adicionar Dia</button>
+        </div>
+      </div>
     </div>
-    <div
-      class="column"
-      style="display: flex; width: 100%; justify-content: space-around"
-    >
-      <button
-        class="btn btn-primary"
-        style="margin-left: 100px"
-        [(ngModel)]="selectedEditStatus"
-        (click)="
-          selectedEditStatus = 'agendado';
+    <div class="column" style="display: flex; width: 100%; justify-content: space-around">
+      <button class="btn btn-primary" style="margin-left: 100px" [(ngModel)]="selectedEditStatus" (click)="
+          selectedEditStatus = 'Agendado';
           newStatus();
           salvaCurso();
           scrollUp();
           voltar()
-        "
-      >
+        ">
         Confirmar
       </button>
       <button class="btn btn-danger" (click)="fechar()">Cancelar</button>
     </div>
   </div>
 
-    <!-- PAGINA MATRIZ RESPONSABILIDADE -->
-
-    <div *ngIf="exibirMr" class="info-table" style="margin-left: 400px !important;">
-      <h1>Matriz de Responsabilidade N.º{{ os.id }}/2024</h1>
-
-          <!-- Tema -->
-
-      <div class="row marginzero">
-        <div class="label padzero">Tema:</div>
-        <div class="input padzero">
-          <textarea
-            [(ngModel)]="os.tituloEvento"
-            type="text"
-            id="tituloEvento"
-            disabled
-          ></textarea>
-        </div>
-      </div>
-
-          <!-- Objetivo -->
-
-      <div class="row marginzero">
-        <div class="label padzero">Objetivo:</div>
-        <div class="input padzero">
-          <textarea
-            [(ngModel)]="os.objetivo"
-            type="text"
-            id="objetivo"
-            rows="5"
-          ></textarea>
-        </div>
-      </div>
-
-          <!-- Público-alvo -->
-
-      <div class="row" class="row marginzero">
-        <div class="label" class="label padzero">Público-alvo:</div>
-        <div class="input" class="input padzero">
-          <textarea
-          [(ngModel)]="os.publicoAlvomr"
-          type="text"
-          id="publicoAlvomr"
-          rows="5"
-        ></textarea>
-        </div>
-      </div>
-
-
-      <h3 style="margin-left: 26px;font-size:20px; font-weight: bold ;margin-bottom: 10px;">Datas e Horários:</h3>
-          <div *ngFor="let item of os.datasHorarios; let i = index" class="row marginzero">
-            <div class="label padzero">Data:</div>
-            <div class="input padzero">
-              <input [(ngModel)]="item.data" type="date" disabled />
-            </div>
-        
-            <div class="label padzero">Horário de Início:</div>
-            <div class="input padzero">
-              <input [(ngModel)]="item.horaInicio" type="time" disabled />
-            </div>
-        
-            <div class="label padzero">Horário de Término:</div>
-            <div class="input padzero">
-              <input [(ngModel)]="item.horaFim" type="time" disabled/>
-            </div>
-            </div>
-
-
-            <div class="row" class="row marginzero">
-              <div class="label" class="label padzero">Local:</div>
-              <div class="input" class="input padzero">
-                <input [(ngModel)]="os.local" type="text" id="local" value="os.local" disabled />
-              </div>
-            </div>
-
-
-            <div *ngIf="isEditando" class="row marginzero">
-              <div class="label" class="label padzero">
-                Público previsto:
-              </div>
-              <div class="textarea" class="input padzero">
-                <input
-                type="number"
-                  [(ngModel)]="os.publicoPrevisto"
-                  id="publicoPrevisto" row="0 !important" value="os.publicoPrevisto"  >
-      
-              </div>
-            </div>
-
-            <div class="row" class="row marginzero">
-              <div class="label" class="label padzero">
-                Link de inscrição:
-              </div>
-              <div class="input" class="input padzero">
-                <input
-                [(ngModel)]="os.linkinscricao"
-                  type="text"
-                  id="linkinscricao"
-                  >
-              </div>
-            </div>
-
-
-      <div *ngIf="isEditando" class="row marginzero">
-        <div class="label" class="label padzero">Carga Horária:</div>
-        <div class="input" class="input padzero">
-          <input
-            [(ngModel)]="os.cargaHoraria"
-            type="number"
-            id="cargaHoraria"
-            disabled
-          />
-        </div>
-      </div>
-      <div class="row" class="row marginzero">
-        <div class="label">Modalidade:</div>
-        <div class="input" class="input padzero">
-          <input [(ngModel)]="os.modalidade" id="modalidade" value="os.modalidade" disabled>
-        </div>
-      </div>
-
-      <div class="row marginzero">
-        <div class="label padzero">Demanda:</div>
-        <div class="input padzero">
-          <textarea [(ngModel)]="os.demanda" id="demanda" row="0" value="os.demanda" disabled>
-          </textarea>
-        </div>
-      </div>
-
-
-      <div class="row" class="row marginzero">
-        <div class="label" class="label padzero">Coordenador Geral:</div>
-        <div class="input" class="input padzero">
-          <input
-            type="text"
-            id="coordenadorGeral"
-            value="Marcos José da Silva"
-            rows="1"
-            disabled
-          />
-        </div>
-      </div>
-      <div class="row" class="row marginzero">
-        <div class="label" class="label padzero">
-          Coordenadoria de Apoio Institucional:
-        </div>
-        <div class="input" class="input padzero">
-          <input
-            type="text"
-            id="coordenadoriaApoioInstitucional"
-            value="Carlos Arantes"
-            disabled
-          />
-        </div>
-      </div>
-      <div class="row" class="row marginzero">
-        <div class="label" class="label padzero">
-          Coordenadoria de Capacitação do TCE-MT:
-        </div>
-        <div class="input" class="input padzero">
-          <input
-            type="text"
-            value="Marina Bressane Spinelli"
-            disabled
-            >
-        </div>
-      </div>
-
-
-      <div class="row" class="row marginzero">
-        <div class="label" class="label padzero">
-          Coordenadoria de Administração Municipal:
-        </div>
-        <div class="input" class="input padzero">
-          <input
-            type="text"
-            value="Clenilda Poletto"
-            disabled
-            >
-        </div>
-      </div>
-
-
-       <!-- Seção para Apoio Coordenadoria -->
-<div class="row marginzero" style=" margin-left: 20px;">
-  <h3 style="margin-left: 0px; font-size: 20px; font-weight: bold; margin-bottom: 10px;">
-    Apoio Coordenadoria:
-  </h3>
-  <div *ngFor="let item of os.coordenacaoApoioAcao; let i = index" class="row marginzero">
-    <div class="input padzero">
-      <select [(ngModel)]="os.coordenacaoApoioAcao[i]" id="coordenacaoApoioAcao"  disabled>
-        <option *ngFor="let select of selectsCoordenacaoApoio" [value]="select">{{ select }}</option>
-      </select>
-    </div>
-  </div>
-</div>
-      <div class="row" class="row marginzero"> <!--AJUSTAR OBSERVACAO USANO CHECKBOX-->
-        <div class="label" class="label padzero">Observação:</div>
-        <div class="input" class="input padzero">
-          <textarea
-            [(ngModel)]="os.observacao"
-            id="observacao"
-            rows="3"
-          ></textarea>
-        </div>
-      </div>
-
-       <!-- DESCRICAO ATRIBUICOES -->
-
-
-      <div *ngIf="isEditando">
-      <div class="info-table" style="margin-left: 0px !important;">
-        <h1>Descrição das atribuições</h1>
-        <div class="row marginzero">
-          <div class="label padzero">Unidade/Responsável:</div>
-          <div class="input padzero">
-            <textarea [(ngModel)]="atrib.descricao" type="text" id="descricao" disabled></textarea>
-          </div>
-        </div>
-      
-        <div class="row marginzero">
-          <div class="label padzero">Presidente:</div>
-          <div class="input padzero">
-            <textarea [(ngModel)]="atrib.presidente" type="text" id="presidente" rows="5" disabled></textarea>
-          </div>
-        </div>
-      
-        <div class="row marginzero">
-          <div class="label padzero">Gabinete da Presidência:</div>
-          <div class="input padzero">
-            <textarea [(ngModel)]="atrib.gabinetePresidencia" type="text" id="gabinetePresidencia" rows="5" disabled></textarea>
-          </div>
-        </div>
-      
-        <div class="row marginzero">
-          <div class="label padzero">Secretaria Geral da Presidência:</div>
-          <div class="input padzero">
-            <textarea [(ngModel)]="atrib.secretariaGeral" type="text" id="secretariaGeral" rows="3" disabled></textarea>
-          </div>
-        </div>
-      
-        <div class="row marginzero">
-          <h3 style="font-size: 20px; font-weight: bold;">Gabinete de Conselheiro - Procurador de Contas</h3>
-        </div>
-      
-        <div class="row marginzero">
-          <div class="label padzero">Gabinete Conselheiro:</div>
-          <div class="input padzero">
-            <textarea [(ngModel)]="atrib.gabineteConselheiro" type="text" id="gabineteConselheiro" rows="3" disabled></textarea>
-          </div>
-        </div>
-      
-        <div class="row marginzero">
-          <div class="label padzero">Gabinete do Conselheiro:</div>
-          <div class="input padzero">
-            <textarea [(ngModel)]="atrib.gabineteConselheiroValter" type="text" id="gabineteConselheiroValter" rows="3" disabled></textarea>
-          </div>
-        </div>
-      
-        <div class="row marginzero">
-          <div class="label padzero">Conselheiro Supervisor:</div>
-          <div class="input padzero">
-            <textarea [(ngModel)]="atrib.conselheiroSupervisor" type="text" id="conselheiroSupervisor" rows="3" disabled></textarea>
-          </div>
-        </div>
-      
-        <div class="row marginzero">
-          <div class="label padzero">Gabinete do Conselheiro:</div>
-          <div class="input padzero">
-            <textarea [(ngModel)]="atrib.gabineteConselheiroNovelli" type="text" id="gabineteConselheiroNovelli" rows="3" disabled></textarea>
-          </div>
-        </div>
-      
-        <div class="row marginzero">
-          <div class="label padzero">Gabinete do Conselheiro:</div>
-          <div class="input padzero">
-            <textarea [(ngModel)]="atrib.gabineteConselheiroDomingos" type="text" id="gabineteConselheiroDomingos" rows="3" disabled></textarea>
-          </div>
-        </div>
-      
-        <div class="row marginzero">
-          <div class="label padzero">Procurador-geral de Contas:</div>
-          <div class="input padzero">
-            <textarea [(ngModel)]="atrib.procuradorGeral" type="text" id="procuradorGeral" rows="3" disabled></textarea>
-          </div>
-        </div>
-      
-        <div class="row marginzero">
-          <h3 style="font-size: 20px; font-weight: bold;">Consultoria Jurídica Geral</h3>
-        </div>
-      
-        <div class="row marginzero">
-          <div class="label padzero">Consultoria Jurídica Geral:</div>
-          <div class="input padzero">
-            <textarea [(ngModel)]="atrib.consultoriaJuridicaGeral" type="text" id="consultoriaJuridicaGeral" rows="3" disabled></textarea>
-          </div>
-        </div>
-      
-        <div class="row marginzero">
-          <h3 style="font-size: 20px; font-weight: bold;">Comissão Permanente de Saúde e Assistência Social do TCE-MT</h3>
-        </div>
-      
-        <div class="row marginzero">
-          <div class="label padzero">Gabinete do Guilherme:</div>
-          <div class="input padzero">
-            <textarea [(ngModel)]="atrib.gabineteGuilherme" type="text" id="gabineteGuilherme" rows="3" disabled></textarea>
-          </div>
-        </div>
-      
-        <div class="row marginzero" style="margin-left: 20px;">
-          <h3 style="font-size: 20px; font-weight: bold; margin-bottom: 10px;">Observação:</h3>
-          <div class="input padzero">
-            <textarea [(ngModel)]="atrib.observacao" id="observacao" rows="3"></textarea>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-      <div
-        class="column"
-        style="display: flex; width: 100%; justify-content: space-around"
-      >
-        <button
-          class="btn btn-outline"
-          style="z-index: 999"
-          *ngIf="!imprimir"
-          (click)="this.imprimir = true; salvarRelatorio2('os')"
-        >
-          Gerar Documento
-        </button>
-
-        <button
-          class="btn btn-primary"
-          *ngIf="!imprimir"
-          (click)="
-            salvaCurso();
-            proximaPagina();
-            exibirMenuOS = false;
-            faseAtual = faseAtual + 1;
-            (!exibirTr);
-            (exibirOs);
-          "
-        >
-        Confirmar/Salvar
-        </button>
-        <button class="btn btn-danger" *ngIf="!imprimir" (click)="fechar()">
-          Cancelar
-        </button>
-      </div>
-    </div>
-
 
 </main>
+<div *ngIf="carregando" style="top: 50%; left: 50%; position: absolute; z-index: 99999999999999999; ">
+  <div *ngIf="carregando" style="top: 50%; left: 50%; position: absolute; z-index: 9999999999999999"
+    class="spinner-border" role="status"></div>
+</div>
+
+
+<div *ngIf="camposIn" style=" position: absolute; 
+z-index: 99999999999999999999999999999999999999;
+top: 10vH; 
+right: 20px; 
+background-color: #333; 
+color: #fff;
+padding: 10px 20px;
+border-radius: 5px;
+">
+  Preencha todos os campos!
+</div>

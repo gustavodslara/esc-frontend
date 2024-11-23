@@ -16,9 +16,9 @@
         (change)="filterCursos(selectedStatus)"
       >
         <option value="Todos">Todos</option>
-        <option value="agendado">Agendado</option>
-        <option value="andamento">Em andamento</option>
-        <option value="finalizado">Finalizado</option>
+        <option value="Agendado">Agendado</option>
+        <option value="Em Andamento">Em andamento</option>
+        <option value="Finalizado">Finalizado</option>
       </select>
       <label for="filtro-ano">Ano:</label>
       <select
@@ -57,7 +57,7 @@
           <th>Status</th>
           <th class="sort" (click)="sortCursos('nomeCurso')">Nome do Curso</th>
           <th>Datas</th>
-          <th>Editar</th>
+          <th>Acessar</th>
           <th>Excluir</th>
         </tr>
       </thead>
@@ -69,7 +69,7 @@
               data-toggle="tooltip"
               data-placement="top"
               title="Agendado"
-              *ngIf="curso.status == 'agendado'"
+              *ngIf="curso.status == 'Agendado'"
               class="bi bi-info-circle text-warning"
             ></i>
             <i
@@ -77,15 +77,22 @@
               data-placement="top"
               title="Em Andamento"
               z
-              *ngIf="curso.status == 'andamento'"
+              *ngIf="curso.status == 'Em Andamento'"
               class="bi bi-skip-end-circle text-primary"
             ></i>
             <i
               data-toggle="tooltip"
               data-placement="top"
               title="Finalizado"
-              *ngIf="curso.status == 'finalizado'"
+              *ngIf="curso.status == 'Finalizado'"
               class="bi bi-check-circle text-success"
+            ></i>
+            <i
+              data-toggle="tooltip"
+              data-placement="top"
+              title="Cancelado"
+              *ngIf="curso.status == 'Cancelado'"
+              class="bi bi-x-circle text-danger"
             ></i>
           </td>
           <td class="alturamin">{{ curso.tituloEvento }}</td>
@@ -98,14 +105,14 @@
               class="btn btn-primary"
               (click)="goToEdit(curso.id, true)"
             >
-              Editar
+            Acessar
             </button>
             <!-- <button
             type="button"
             class="btn btn-primary"
             (click)="idCursoSelecionado = curso.id; editando = true"
           >
-            Editar
+            Acessar
           </button> -->
           </td>
           <td class="flex-center alturamin">
@@ -151,6 +158,9 @@
           </div>
           <div class="column">
             <i class="bi bi-check-circle text-success"></i> Finalizado
+          </div>
+          <div class="column">
+            <i class="bi bi-x-circle text-danger"></i> Cancelado
           </div>
         </div>
       </div>

@@ -15,7 +15,8 @@ import { NotificationService } from '../../services/notification.service';
   styleUrl: './navbar.component.scss',
 })
 export class NavbarComponent {
-  dataList: any;
+  profilePicUrl: any
+  localStorage: any; dataList: any;
   logout() {
     this.authService.logout();
     this.router.navigate(["/"]);
@@ -36,11 +37,9 @@ export class NavbarComponent {
   parseOsString(inputString: string): { id: number; name: string; etc: string } {
     const parts = inputString.split(",");
     const id = parseInt(parts[1].split(":")[1].trim(), 10);
-   console.log("tessss");
-   console.log(id);
-   const name = parts[2].trim(); 
+    const name = parts[2].trim();
     const etc = parts[3].split(":")[1].trim();
-  
+
     return { id, name, etc };
   }
 
@@ -55,34 +54,38 @@ export class NavbarComponent {
     private authService: AuthService,
     private websocketService: WebsocketService,
     private el: ElementRef,
-    private notification: NotificationService
+    private notification: NotificationService,
   ) {
     var ws = this.websocketService.socketConnector();
     ws.subscribe(
       (msg: any) => {
-      console.log("AAAAAAAAA");
-      console.log(msg);
-      let m = msg.message;
-      this.messages.push(m);
-      this.notification.notifications$.next(this.messages);let m2 = msg;
+        console.log(msg);
+        let m = msg.message;
+        this.messages.push(m);
+        this.notification.notifications$.next(this.messages); let m2 = msg;
+        this.cookieService.set("backupNot",JSON.stringify(this.notification.getNotValue()));
+        const parts: string[] = m.split(", "); let id: string | null = null; let name: string | null = null; let etc: string | null = null; for (const part of parts) { if (part.startsWith("id:")) { id = part.substring(3); } else if (part.startsWith("etc:")) { etc = part.substring(4); } else { name = part; } }
 
-        let { id, name, etc } = this.parseOsString(m);
+
+
+
+
 
         m = "Nome:" + name;
 
         console.log(m);
-       
+
         this.currentMsg = m;
-      
+
         this.showToast();
       },
       (err: any) => console.log(err),
       () => console.log('complete')
     );
 
-  
+
   }
-  private notificationsSubscription!: Subscription; 
+  private notificationsSubscription!: Subscription;
 
   messages: string[] = [];
   private subscription!: Subscription;
@@ -104,7 +107,7 @@ export class NavbarComponent {
   specificUserName: string | undefined;
 
   //NOMES DE USUÁRIO---------------------
-
+  user: any = {};
   isLoggedUser = '';
   async ngOnInit() {
     // Check for login status in cookies
@@ -122,5 +125,11 @@ export class NavbarComponent {
       this.isLoggedUser = isLoggedUser;
       console.log(isLoggedUser);
     });
+    this.user = await this.authService.getUser(this.isLoggedUser);
+    this.profilePicUrl = this.user.img;
   }
+
+
+
+
 }

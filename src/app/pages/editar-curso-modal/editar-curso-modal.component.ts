@@ -16,6 +16,7 @@ import { MenuDocsComponent } from '../../components/menu-docs/menu-docs.componen
 import { WebsocketService } from '../../services/websocket.service';
 import { saveAs } from 'file-saver';
 import { environment } from '../../services/enviroment';
+import { NotificacoesComponent } from '../notificacoes/notificacoes.component';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../services/auth.service';
@@ -27,10 +28,10 @@ import { AuthService } from '../../services/auth.service';
     FormsModule,
     RouterOutlet,
     CommonModule,
+    NavbarComponent,
     EditarCursoModalComponent,
     MenuDocsComponent,
-    NavbarComponent,
-    ToastrModule,
+
   ],
   templateUrl: './editar-curso-modal.component.html',
   styleUrl: './editar-curso-modal.component.scss',
@@ -41,7 +42,7 @@ export class EditarCursoModalComponent {
   exibirCurso: any = false;
   curso: any;
   stId: any;
-  closeAddModal() {}
+  closeAddModal() { }
 
   exibirMenuOS = true;
   exibirMenuTR = true;
@@ -51,7 +52,7 @@ export class EditarCursoModalComponent {
 
   faseAtual = 0;
 
-  
+
   Osvisivel = true;
   Trvisivel = true;
   Mrvisivel = true;
@@ -60,15 +61,15 @@ export class EditarCursoModalComponent {
   Anexosvisivel = true;
 
   trocarStatus() {
-    if(this.selectedStatus === 'Agendado') {
+    if (this.selectedStatus == 'Agendado') {
       this.os.status = 'Agendado';
       this.os.status = this.selectedEditStatus;
     } else {
-      if(this.selectedStatus === 'Em andamento') {
+      if (this.selectedStatus == 'Em andamento') {
         this.os.status = 'Em andamento';
         this.os.status = this.selectedEditStatus;
       } else {
-        if(this.selectedStatus === 'Finalizado') {
+        if (this.selectedStatus == 'Finalizado') {
           this.os.status = 'Finalizado';
           this.os.status = this.selectedEditStatus;
         }
@@ -78,42 +79,25 @@ export class EditarCursoModalComponent {
   }
 
   async ngOnInit() {
-    this.carregando = true;
-      this.adicionarDataHorario();
-    }
+    this.os.datasHorarios = [{ data: '', horaInicio: '', horaFim: '' }];
+
     this.adicionarDataHorario();
     this.route.params.subscribe((params) => {
       this.idCurso = params['idCurso'];
       this.isEditando = params['isEditando'] === 'true' ? true : false;
       this.os.id = this.idCurso + '';
-      console.log(this.idCurso);
-      console.log(this.isEditando);
     });
     if (this.isEditando != undefined && this.isEditando == true) {
-      console.log(this.isEditando);
+      this.carregando = true;
       setTimeout(async () => {
         await this.carregarDadoCursoEditando();
-        this.carregando = false;
-      }, 650);
-    } else {
-      this.carregando = false;
 
+
+      }, 650);
     }
     this.os.id = this.idCurso + '';
-
-
-    this.authService.isLoggedUser$.subscribe((isLoggedUser) => {
-      this.isLoggedUser = isLoggedUser;
-      console.log(isLoggedUser);
-    });
-    this.user = await this.authService.getUser(this.isLoggedUser);
-    this.isDisabled = this.user.isCoordenador == true || this.user.isEstagiario == true ? false : true;
-    console.log("teeasdasda");
-    console.log(this.isDisabled);
-
   }
-  isLoggedUser = "";
-  user: any = {};
+
   apiUrl = environment.jsonServerUrl;
 
   constructor(
@@ -121,9 +105,23 @@ export class EditarCursoModalComponent {
     private http: HttpClient,
     private router: Router,
     private websocketService: WebsocketService,
-    private toastr: ToastrService,
+    private toast: ToastrService,
     private authService: AuthService
-  ) { }
+
+  ) {
+    this.authService.isLoggedUser$.subscribe((isLoggedUser) => {
+      this.isLoggedUser = isLoggedUser;
+    });
+
+    this.authService.getUser(this.isLoggedUser).then(u => {
+      this.user = u;
+      this.disabled = this.user.isEstagiario === false ? true : false;
+      if (this.disabled == true) {
+        this.disabled = this.user.isCoordenador === false ? true : false;;
+      }
+    });
+
+  }
 
   isEditando: boolean | undefined;
   @Input() idCurso: any;
@@ -141,14 +139,15 @@ export class EditarCursoModalComponent {
   async carregarDadoCursoEditando() {
     if (this.isEditando) {
       let res: any = await this.http
-        .get(this.apiUrl + '/os/' + this.idCurso)
+        .get((this.apiUrl + '/os/' + this.idCurso))
         .toPromise();
       this.os = res;
-
+      this.equip1 = this.os.equipeTecnica.includes('Criar Link');
+      this.equip2 = this.os.equipeTecnica.includes('Elaborar e Encaminhar Avaliação');
+      this.equip3 = this.os.equipeTecnica.includes('Emitir Certificado');
+      this.equip4 = this.os.equipeTecnica.includes('Emitir Relatório Final');
+      this.Trvisivel = this.os.equipeJuridica;
       if (this.os.idTr != undefined && this.os.idTr != null && this.os.idTr.length > 0) {
-        console.log('IHA');
-        console.log(this.os.tr);
-        console.log(this.os);
         let trr: any = this.os.tr;
         this.trId = this.os.idTr;
         let res2: any = await this.http
@@ -156,30 +155,28 @@ export class EditarCursoModalComponent {
           .toPromise();
         this.termoRecisao = res2;
       } else {
-        console.log('IHA2');
-        console.log(this.os.tr);
-        console.log(this.os);
         this.trId = null;
       }
 
-      console.log(this.os);
       let equipeT = this.os.equipeTecnica;
-      if (equipeT != undefined && equipeT != null && equipeT.length > 0) {
-        this.equip1 = equipeT.includes('Criar Link');
-        this.equip2 = equipeT.includes('Elaborar e encaminhar avaliação');
-        this.equip3 = equipeT.includes('Emitir Certificado');
-        this.equip4 = equipeT.includes('Emitir Relatório Final');
-      }
+      this.exibirMatriz = this.os.equipeEdu;
       this.termoRecisao = res.tr === undefined ? this.termoRecisao : res.tr;
+      this.carregando = false;
+      if (this.os.datasHorarios != undefined && this.os.datasHorarios != null && this.os.datasHorarios.length === 0) {
+        this.os.datasHorarios = [];
+        this.adicionarDataHorario();
+      }
     }
+
+
   }
+  isLoggedUser: any;
+  user: any = {};
 
   carregando = false;
   recarregaPagina() {
     setTimeout(() => {
-      this.carregando = true;
     }, 700);
-    this.carregando = false;
   }
 
   // Método para fechar o modal
@@ -188,8 +185,37 @@ export class EditarCursoModalComponent {
   }
 
   addField() {
-    this.os.equipeJuridica = [''].concat(this.os.equipeJuridica);
+    this.os.equipeJuridica = this.os.equipeJuridica;
   }
+  exibirMatriz = false
+  salvarCheckMatriz() {
+
+    this.exibirMatriz = !this.exibirMatriz;
+    this.os.equipeEdu = this.exibirMatriz;
+  }
+
+  checkObjectProperties(obj: any): boolean {
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        const value = obj[key];
+        if (value === null || value === undefined || value === "") {
+          return false;
+        }
+        // If the property is an array, check if it's empty
+        if (Array.isArray(value) && value.length === 0) {
+          return false;
+        }
+        // If the property is another object, recursively check its properties
+        if (typeof value === 'object' && !Array.isArray(value) && value !== null) {
+          if (!this.checkObjectProperties(value)) {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  }
+
 
   equip1 = false;
   equip2 = false;
@@ -198,6 +224,7 @@ export class EditarCursoModalComponent {
   equipeJuridica = false;
 
   termoRecisao = {
+    enviaEmail:false,
     esc: '',
     categoria: '',
     anexo: '',
@@ -280,7 +307,9 @@ export class EditarCursoModalComponent {
     this.faseAtual = this.faseAtual == 0 ? 1 : 0;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
-  
+
+  disabled = false;
+
   proximaPaginaAnexos() {
     this.exibirOs = !this.exibirOs;
     this.exibirTr = !this.exibirTr;
@@ -304,16 +333,29 @@ export class EditarCursoModalComponent {
   tess() {
     console.log(this.equip1);
   }
-
+  camposIn = false;
 
   public async salvaCurso() {
     let os: any = this.os;
+    // if (!this.checkObjectProperties(os)) {
+    //   console.log("SOCORROROROR")
+    //   this.camposIn = true;
+    //   setTimeout(() => {
+    //     this.camposIn = false;
+
+    //   }, 3000);
+    //   return;
+    // } else {
+    //   this.camposIn = false;
+    // }
+
     this.carregando = true;
+    os.equipeTecnica = [];
     if (this.equip1) {
-      os.equipeTecnica.push('Criar link');
+      os.equipeTecnica.push('Criar Link');
     }
     if (this.equip2) {
-      os.equipeTecnica.push('Elaborar e encaminhar avaliação');
+      os.equipeTecnica.push('Elaborar e Encaminhar Avaliação');
     }
     if (this.equip3) {
       os.equipeTecnica.push('Emitir Certificado');
@@ -321,18 +363,30 @@ export class EditarCursoModalComponent {
     if (this.equip4) {
       os.equipeTecnica.push('Emitir Relatório Final');
     }
-    if (this.equipeJuridica) {
-      os.equipeJuridica.push(true);
-      this.Trvisivel = true;
-    }else {
-      os.equipeJuridica.push(false);
-      this.Trvisivel = false;
-    }
+    this.Trvisivel = this.os.equipeJuridica;
     os.modalidade = os.modalidade.length > 0 ? os.modalidade : 'NENHUM';
     os.demanda = os.demanda.length > 0 ? os.demanda : 'OUTRA DEMANDA';
     if (this.trId != null) {
       os.idTr = this.trId;
     }
+
+    const datas: string[] = [];
+    const horas: string[] = [];
+    const horasfim: string[] = [];
+
+    os.datasHorarios.forEach((item: { data: string; horaInicio: string; horaFim: string; }) => {
+      datas.push(item.data);
+      horas.push(item.horaInicio);
+      horasfim.push(item.horaFim);
+    });
+
+    os.datasHorarios;
+    os.datas = datas;
+    os.horas = horas;
+    os.horasfim = horasfim;
+
+
+
     if (this.isEditando) {
       var res = await this.http
         .put(this.apiUrl + '/os/' + this.idCurso, os)
@@ -352,9 +406,6 @@ export class EditarCursoModalComponent {
   public async salvaTr() {
     let tr: any = this.termoRecisao;
 
-    console.log('SOC');
-    console.log(tr);
-    console.log(this.trId);
     this.carregando = true;
     tr.modalidade = (tr.modalidade != undefined && tr.modalidade != null && tr.modalidade.length > 0) ? tr.modalidade : 'NENHUM';
     tr.idOs = this.idCurso;
@@ -382,11 +433,11 @@ export class EditarCursoModalComponent {
     this.os.status = this.selectedEditStatus;
   }
 
-  os = {
+  os: any = {
 
-    datasHorarios: [ { data: '', horaInicio: '', horaFim: ''}],
+    datasHorarios: [{ data: '', horaInicio: '', horaFim: '' }],
     idTr: '',
-    id: '0',
+    id: '',
     unidadeSolicitante: '',
     tituloEvento: '',
     dataInicio: '', // Should be a valid date format (e.g., '2024-10-06')
@@ -403,81 +454,131 @@ export class EditarCursoModalComponent {
     coordenacaoApoioAcao: [''],
     coordenacaoApoioOperacional: [''],
     equipeTecnica: [''], // Array of strings
-    equipeJuridica: [''], // Array of strings
+    equipeJuridica: false, // Array of strings
     observacao: '',
     osElaboradaPor: '',
     local: '',
     publicoAlvo: '',
-    status: 'AGENDADO',
+    status: 'Agendado',
     publicoPrevisto: '',
-    objetivo:'',
+    objetivo: '',
     publicoAlvomr: '',
     linkinscricao: '',
     tr: {}, // Assuming tr, mr, and rf are objects
     mr: {},
     rf: {},
-    
+    "nome_presidente3": "Raoni Pedroso Ricci",
+    "atribuicoes3": "•Organizar/planejar com a unidade demandante as providencias necessárias para criação das artes: Tamplates, post´s, certificados para painelistas, programação, fichas de perguntas; etc;\n•Providenciar a diagramação da Programação;\n•Providenciar banner´s de sinalização/identificação dos ambientes de realização da Ação Educacional;\n•Providenciar juntamente com a empresa terceirizada a gravação e sonorização;\n•Confeccionar material eletrônico para divulgação (e-mail marketing, post whats, tamplates, Wallpaper etc.);\n•Confeccionar banner eletrônico e disponibilizar no site do TCE-MT;\n•Providenciar Púlpito digital para o Auditório da ESC;\n•Providenciar backdrop;\n•Providenciar 10 microfones;\n•Providenciar material gráfico: Pastas, certificado dos palestrantes, blocos de rascunho; fichas de perguntas;\n•Realizar a cobertura jornalística e fotográfica da ação educacional;\n•Criar link do YouTube para transmissão;\n•Providenciar transmissão via canais de comunicação do TCE-MT;\n•Inserir transmissão para libras.",
+    "nome_presidente2": "José Mota",
+    "atribuicoes2": "•Produzir conteúdo de TV (entrevistas);\n•Realizar a cobertura jornalística e fotográfica da ação educacional;\n•Providenciar transmissão da Ação Educacional;\n•Confeccionar filmes/vídeos para divulgação institucional.",
+    "nome_presidente1": "Hadassah Suzannah Beserra de Souza",
+    "atribuicoes1": "Disponibilizar equipe para garantir a segurança dos locais da Ação Educacional; Disponibilizar Bombeiros Militares / Brigadistas em atendimento a CI 252/2024/NQVT; Reservar o espaço de estacionamento na frente da ESC para painelistas e palestrantes; Reservar a frente da ESC para embarque e desembarque das Autoridades.",
+    "nome_presidente8": "Carlos Roberto Lourençon",
+    "nome_presidente7": "Núcleo de Cerimonial Danielle Sarris",
+    "nome_presidente6": "Núcleo de Patrimônio Rodrigo Welter Teischmann",
+    "nome_presidente5": "Gerencia de Transportes Alexandre Biancardi",
+    "atribuioces9": "•Providenciar serviço de coffee break;\n•Informar ao restaurante o público previsto da Ação Educacional;\n•Disponibilizar Intérprete de libras;\n•Apoiar na garantia de recursos necessários",
+    "atribuicoes7": "•Organizar e apoiar toda logística da ação educacional e alinhamento das diretrizes com as unidades envolvidas;\n•Definir em conjunto com o Gabinete do Conselheiro Guilherme Maluf o dispositivo de honra;\n•Elaborar roteiro e submeter ao Gabinete do Conselheiro Guilherme Maluf para aprovação;\n•Receber cópia das CI’s para a confirmação de presença dos Conselheiros e demais convidados que compõem mesa de honra;\n•Confirmar via telefone a participação das autoridades e demais convidados;\n•Recepcionar e prestar informações aos participantes;\n•Disponibilizar recepcionistas para recolhimento das perguntas;\n•Disponibilizar Mestre Cerimônia.",
+    "atribuicoes6": "•Disponibilizar reforço para equipe de limpeza;\n•Disponibilizar garçom para atender exclusivamente as autoridades;\n•Garantir café e água em todos os ambientes da Ação Educacional;\n•Disponibilizar equipe para movimentação dos patrimônios.",
+    "atribuicoes5": "•Disponibilizar veículos e motoristas para o transporte dos painelistas e palestrantes;",
+    "nome_presidente4": "André Luiz Costa Cruz",
+    "atribuicoes4": "•Disponibilizar técnicos para atendimento/suporte durante todo evento;\n•Garantir velocidade/conexão adequada para transmissão e credenciamento da Ação Educacional.",
+    "nome_presidente11": "José Carlos Novelli",
+    "atribuicoes18": "Para conhecimento e participação.",
+    "nome_presidente19": "Conselheiro Domingos Neto",
+    "atribuicoes17": "Para conhecimento e participação.",
+    "nome_presidente18": "Alisson Carvalho de Alencar",
+    "atribuicoes16": "Para conhecimento e participação.",
+    "nome_presidente17": "Grhegory Paiva Maia",
+    "atribuicoes15": "Para conhecimento.",
+    "nome_presidente16": "Guilherme Maluf",
+    "atribuicoes14": "•Encaminhar Termo de Referência da Ação Educacional a ESC;\n•Definir o público do evento em conjunto com a Presidência;\n•Enviar ofícios para Prefeitos e Secretários de Saúde e demais Autoridades;\n•Definir programação;\n•Encaminhar programação para Comunicação para diagramação;\n•Verificar a possibilidade de uso do Plenário do TCE-MT para transmissão do encontro;\n•Encaminhar programação para ESC e demais unidades envolvidas;\n•Supervisionar o planejamento e a execução da Ação Educacional;\n•Encaminhar CI/Convite para Membros, Procuradores e todas as unidades em conjunto com o Gabinete da Presidência;\n•Definir em conjunto com o cerimonial, o dispositivo de honra;\n•Aprovar o roteiro em conjunto com cerimonial;\n•Encaminhar cópias dos ofícios para a ESC e Cerimonial;\n•Encaminhar para o Núcleo de Cerimonial cópias dos CI´s, para confirmação de presença;\n•Encaminhar mini currículo dos painelistas a SECOM e Cerimonial;\n•Orçar despesas da Ação Educacional;\n•Solicitar compra de passagem e hospedagem para palestrante;\n•Encaminhar a lista de painelistas e palestrantes que necessitarão de transporte;\n•Encaminhar a lista de painelistas e palestrantes que irão estacionar na frente da ESC;\n•Solicitar os slides das apresentações aos painelistas e encaminhar para ESC até o dia 31/10/2024.",
+    "nome_presidente15": "Mauricio Marques",
+    "atribuicoes13": "•Realizar as ações financeiras e orçamentárias relativas às despesas do TCE-MT.",
+    "nome_presidente14": "Marcos José da Silva",
+    "nome_presidente13": "Marina Pinelli",
+    "nome_presidente12": "Carlos Rubens",
+    "nome_presidente20": "Clenilda Poletto",
+    "atribuicoes12": "•Receber a demanda da Ação Educacional;\n•Compartilhar com o Conselheiro supervisor a demanda recebida;\n•Criar link de inscrição;\n•Definir equipe de trabalho;\n•Elaborar e acompanhar a matriz de responsabilidades, o checklist e demais documentos necessários;\n•Gerenciar a ação educacional quanto aos aspectos operacionais, logísticos e de divulgação;\n•Encaminhar diariamente a lista de inscritos para a Comissão permanente de Saúde e Assistência Social do TCE-MT;\n•Solicitar serviço de coffee break;\n•Organizar a montagem dos materiais da Ação Educacional: pastas, canetas e blocos de rascunho;\n•Organizar sala de Pessoas Importantes;\n•Solicitar Intérprete de libras;\n•Providenciar som ambiente no foyer, durante coffee break;\n•Solicitar canetas;\n•Providenciar transporte dos palestrantes e painelistas;\n•Encaminhar para o Gabinete Militar, a lista das painelistas e palestrantes para reserva espaço de estacionamento na frente da Escola;\n•Liberar Certificado aos participantes",
+    "nome_presidente10": "André Luiz Costa Cruz",
+    "atribuicoes11": "•Disponibilizar técnicos para atendimento/suporte durante todo evento;\n•Garantir velocidade/conexão adequada para transmissão e credenciamento da Ação Educacional.",
+    "nome_presidente9": "Raoni Pedroso Ricci",
+    "atribuicoes10": "•Organizar/planejar com a unidade demandante as providencias necessárias para criação das artes: Tamplates, post´s, certificados para painelistas, programação, fichas de perguntas; etc;\n•Providenciar a diagramação da Programação;\n•Providenciar banner´s de sinalização/identificação dos ambientes de realização da Ação Educacional;\n•Providenciar juntamente com a empresa terceirizada a gravação e sonorização;\n•Confeccionar material eletrônico para divulgação (e-mail marketing, post whats, tamplates, Wallpaper etc.);\n•Confeccionar banner eletrônico e disponibilizar no site do TCE-MT;\n•Providenciar Púlpito digital para o Auditório da ESC;\n•Providenciar backdrop;\n•Providenciar 10 microfones;\n•Providenciar material gráfico: Pastas, certificado dos palestrantes, blocos de rascunho; fichas de perguntas;\n•Realizar a cobertura jornalística e fotográfica da ação educacional;\n•Criar link do YouTube para transmissão;\n•Providenciar transmissão via canais de comunicação do TCE-MT;\n•Inserir transmissão para libras.",
+    "nome_presidente26": "Sérgio Ricardo de Almeida",
+    "atribuicoes23": "•Validar a Ação Educacional;\n•Assinar ofícios para Prefeitos e Secretários de Saúde e demais Autoridades, em conjunto com Gabinete do Conselheiro Guilherme Maluf;\n•Assinar CI/Convite para participação de Conselheiros e Procuradores, em conjunto com Gabinete do Conselheiro Guilherme Maluf;\n•Autorizar as despesas inerentes da Ação Educacional.",
+    "nome_presidente25": "Paula Pietro",
+    "atribuicoes22": "•Acompanhar a execução da Ação Educacional junto à Comissão Permanente de Saúde e Assistência Social do TCE-MT;\n•Confirmar a participação do Presidente na abertura da Cerimônia.",
+    "nome_presidente24": "Nilson Fernando Gomes Bezerra",
+    "atribuicoes21": "Para conhecimento e participação.",
+    "nome_presidente23": "Antônio Joaquim",
+    "atribuicoes20": "Para conhecimento e participação.",
+    "nome_presidente22": "Conselheiro Valter Albano",
+    "nome_presidente21": "Waldir Júlio Teis",
+    "atribuicoes19": "Para conhecimento e participação.",
   };
 
-atrib: any = { descricao: 'Nome do Responsável/Unidade',
-  presidente: 'Sérgio Ricardo de Almeida: Validar a Ação Educacional; Assinar ofícios para Prefeitos e Secretários de Saúde e demais Autoridades...',
-  gabinetePresidencia: 'Paula Pietro: Acompanhar a execução da Ação Educacional...', 
-  secretariaGeral: 'Nilson Fernando Gomes Bezerra: Para conhecimento e participação', 
-  gabineteConselheiro: 'Antônio Joaquim: Para conhecimento e participação', 
-  abineteConselheiroValter: 'Valter Albano: Para conhecimento e participação', 
-  conselheiroSupervisor: 'Waldir Júlio Teis: Para conhecimento e participação', 
-  gabineteConselheiroNovelli: 'José Carlos Novelli: Para conhecimento e participação', 
-  gabineteConselheiroDomingos: 'Domingos Neto: Para conhecimento e participação', 
-  procuradorGeral: 'Alisson Carvalho de Alencar: Para conhecimento e participação', 
-  consultoriaJuridicaGeral: 'Grhegory Paiva Maia: Para conhecimento', 
-  gabineteGuilherme: 'Gabinete do Guilherme: Encaminhar Termo de Referência da Ação', 
-  observacao: ''
-}
-
-// Define a propriedade com as opções para o <select>
-selectsCoordenacaoApoio:string[] = ['Alexandre Viegas da Silva',
-  'Dilce Meire Nunes Medeiros Santos',
-  'Fabiano Mrozkowski',
-  'Karinny Emanuelle Campos Muzzi de Oliveira',
-  'Oscar da Costa Ribeiro Neto',
-  'Kleber Batista Souza Andrade'];
-
-
-// Define a propriedade com as opções para o <select>
-opcoesOperacional:string[] = ['Evanildes Maria dos Reis',
-  'Jaques Marques de Moraes',
-  'Fabiano Mrozkowski',
-  'José de Arruda Campos Filho',
-  'Josenei Souza da Silva',
-  'Júlio Aramito Leal',
-  'Marcos Rodrigues da Silva',
-  'Sinaila Paranhos Quida'];
-
-
-// Função para adicionar uma nova entrada na seção "Apoio Coordenadoria"
-adicionarCoordenacaoApoio() {
-  this.os.coordenacaoApoioAcao.push('');
-}
-
-// Função para remover uma entrada específica na seção "Apoio Coordenadoria"
-removerCoordenacaoApoio(index: number) {
-  if (this.os.coordenacaoApoioAcao.length > 1) {
-    this.os.coordenacaoApoioAcao.splice(index, 1);
+  atrib: any = {
+    descricao: 'Nome do Responsável/Unidade',
+    presidente: 'Sérgio Ricardo de Almeida: Validar a Ação Educacional; Assinar ofícios para Prefeitos e Secretários de Saúde e demais Autoridades...',
+    gabinetePresidencia: 'Paula Pietro: Acompanhar a execução da Ação Educacional...',
+    secretariaGeral: 'Nilson Fernando Gomes Bezerra: Para conhecimento e participação',
+    gabineteConselheiro: 'Antônio Joaquim: Para conhecimento e participação',
+    abineteConselheiroValter: 'Valter Albano: Para conhecimento e participação',
+    conselheiroSupervisor: 'Waldir Júlio Teis: Para conhecimento e participação',
+    gabineteConselheiroNovelli: 'José Carlos Novelli: Para conhecimento e participação',
+    gabineteConselheiroDomingos: 'Domingos Neto: Para conhecimento e participação',
+    procuradorGeral: 'Alisson Carvalho de Alencar: Para conhecimento e participação',
+    consultoriaJuridicaGeral: 'Grhegory Paiva Maia: Para conhecimento',
+    gabineteGuilherme: 'Gabinete do Guilherme: Encaminhar Termo de Referência da Ação',
+    observacao: ''
   }
-}
 
-// Função para adicionar uma nova entrada na seção "Coordenação de Apoio Operacional"
-adicionarCoordenacaoOperacional() {
-  this.os.coordenacaoApoioOperacional.push('');
-}
+  // Define a propriedade com as opções para o <select>
+  selectsCoordenacaoApoio: string[] = ['Alexandre Viegas da Silva',
+    'Dilce Meire Nunes Medeiros Santos',
+    'Fabiano Mrozkowski',
+    'Karinny Emanuelle Campos Muzzi de Oliveira',
+    'Oscar da Costa Ribeiro Neto',
+    'Kleber Batista Souza Andrade'];
 
-// Função para remover uma entrada específica na seção "Coordenação de Apoio Operacional"
-removerCoordenacaoOperacional(index: number) {
-  if (this.os.coordenacaoApoioOperacional.length > 1) {
-    this.os.coordenacaoApoioOperacional.splice(index, 1);
+
+  // Define a propriedade com as opções para o <select>
+  opcoesOperacional: string[] = ['Evanildes Maria dos Reis',
+    'Jaques Marques de Moraes',
+    'Fabiano Mrozkowski',
+    'José de Arruda Campos Filho',
+    'Josenei Souza da Silva',
+    'Júlio Aramito Leal',
+    'Marcos Rodrigues da Silva',
+    'Sinaila Paranhos Quida'];
+
+
+  // Função para adicionar uma nova entrada na seção "Apoio Coordenadoria"
+  adicionarCoordenacaoApoio() {
+    this.os.coordenacaoApoioAcao.push('');
   }
-}
 
+  // Função para remover uma entrada específica na seção "Apoio Coordenadoria"
+  removerCoordenacaoApoio(index: number) {
+    if (this.os.coordenacaoApoioAcao.length > 1) {
+      this.os.coordenacaoApoioAcao.splice(index, 1);
+    }
+  }
+
+  // Função para adicionar uma nova entrada na seção "Coordenação de Apoio Operacional"
+  adicionarCoordenacaoOperacional() {
+    this.os.coordenacaoApoioOperacional.push('');
+  }
+
+  // Função para remover uma entrada específica na seção "Coordenação de Apoio Operacional"
+  removerCoordenacaoOperacional(index: number) {
+    if (this.os.coordenacaoApoioOperacional.length > 1) {
+      this.os.coordenacaoApoioOperacional.splice(index, 1);
+    }
+  }
+
+
+  matriz: any = {}
 
 
   @ViewChild('dataToExport', { static: false })
@@ -491,48 +592,76 @@ removerCoordenacaoOperacional(index: number) {
       'Content-Type': 'application/json',
     });
 
-    if(tipo == 'os'){
+    if (tipo == 'os') {
+      doc.datas = [];
+      doc.horas = [];
+      doc.horasfim = [];
+      doc.datasHorarios.forEach((element: { data: any; horaInicio: any; horaFim: any; }) => {
+        doc.datas.push(element.data.toString());
+        doc.horas.push(element.horaInicio.toString());
+        doc.horasfim.push(element.horaFim.toString());
+      });
+      console.log("KAKAKAKAKPQP");
+      console.log(doc);
       this.http
-      .post(this.pdfUrl+'/gerarPdf/' + 'os', doc, {
-        headers,
-        responseType: 'blob',
-      })
-      .subscribe(
-        (response: Blob) => {
-          console.log('teste')
-          const blob = new Blob([response], { type: 'application/pdf' });
-          const filename = 'relatorio.pdf'; // Customize the filename if needed
-          saveAs(blob, filename);
-        },
-        (error) => {
-          console.error('Error generating PDF:', error);
-        }
-      );
-    } else {
+        .post(('/api' + '/gerarPdf/' + 'os'), doc, {
+          headers,
+          responseType: 'blob',
+        })
+        .subscribe(
+          (response: Blob) => {
+            console.log('teste')
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const filename = 'relatorio_os.pdf'; // Customize the filename if needed
+            saveAs(blob, filename);
+          },
+          (error) => {
+            console.error('Error generating PDF:', error);
+          }
+        );
+    } else if (tipo == 'tr') {
       this.http
-      .post(this.pdfUrl+'/gerarPdf2/' + 'os2', doc, {
-        headers,
-        responseType: 'blob',
-      })
-      .subscribe(
-        (response: Blob) => {
-          console.log('teste')
-          const blob = new Blob([response], { type: 'application/pdf' });
-          const filename = 'relatorio.pdf'; // Customize the filename if needed
+        .post('/api' + '/gerarPdf2/' + 'os2' + (this.enviaEmail ? '/email' : ''), doc, {
+          headers,
+          responseType: 'blob',
+        })
+        .subscribe(
+          (response: Blob) => {
+            console.log('teste')
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const filename = 'relatorio_tr.pdf'; // Customize the filename if needed
 
-          saveAs(blob, filename);
-  },
-        (error) => {
-          console.error('Error generating PDF:', error);
-        }
-      );
+            saveAs(blob, filename);
+            this.enviaEmail = false;
+          },
+          (error) => {
+            console.error('Error generating PDF:', error);
+          }
+        );
+    } else if (tipo == 'mr') {
+      this.http
+        .post('/api' + '/gerarPdf3/' + 'os3', doc, {
+          headers,
+          responseType: 'blob',
+        })
+        .subscribe(
+          (response: Blob) => {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const filename = 'relatorio_mr.pdf'; // Customize the filename if needed
+
+            saveAs(blob, filename);
+          },
+          (error) => {
+            console.error('Error generating PDF:', error);
+          }
+        );
     }
-   
+
   }
 
   title = 'export-pdf';
   imprimir = false;
-  salvarRelatorio2(fonte: string) {
+  salvarRelatorio3(fonte: string) {
     this.imprimir = true;
 
     this.exibirOs = true;
@@ -545,6 +674,21 @@ removerCoordenacaoOperacional(index: number) {
       this.voltar();
     }, 1750);
   }
+  salvarRelatorio2(fonte: string) {
+    this.imprimir = true;
+
+    this.exibirOs = true;
+    this.generateAndDownloadPdf(fonte == 'os' ? this.os : (fonte === 'tr' ? this.termoRecisao : this.os), fonte);
+    setTimeout(() => {
+        this.imprimir = false;
+        this.exibirOs = fonte === 'OS';
+        this.exibirTr = fonte === 'TR';
+        this.exibirMr = fonte === 'MR'; // Add this line
+        this.voltar();
+    }, 1750);
+  }
+
+  enviaEmail = false;
   salvarRelatorio(fonte: string) {
     this.imprimir = true;
 
@@ -601,7 +745,7 @@ removerCoordenacaoOperacional(index: number) {
   }
 
   adicionarPrimeiraData() {
-    this.os.datasHorarios.push({ data: '21-03-2024', horaInicio: '10:30', horaFim: '19:30' });
+    this.os.datasHorarios.push({ data: '', horaInicio: '', horaFim: '' });
   }
 
   removerDataHorario(index: number) {
@@ -609,5 +753,61 @@ removerCoordenacaoOperacional(index: number) {
       this.os.datasHorarios.splice(index, 1);
     }
   }
+
+
+
+
+
+
+
+
+
+
+
+
+  @ViewChild('menu', { static: false }) menu!: ElementRef;
+
+  async printPageAsPDF() {
+    this.menu.nativeElement.style.display = 'none';
+    if (!this.dataToExport) {
+      console.error('Element not found');
+      return;
+    }
+
+    const element = this.dataToExport.nativeElement;
+
+    const canvas = await html2canvas(element);
+    const imgData = canvas.toDataURL('image/png');
+
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const imgWidth = 210; // A4 width in mm
+    const pageHeight = 297; // A4 height in mm
+    const imgHeight = canvas.height * imgWidth / canvas.width;
+    let heightLeft = imgHeight;
+    let position = 0;
+
+    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+
+    while (heightLeft >= 0) {
+      position = heightLeft - imgHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+    }
+
+    pdf.save('page.pdf');
+    this.menu.nativeElement.style.display = 'block';
+  }
+
+
+
+
+
+
+  teste = true;
+
+
+
 
 }

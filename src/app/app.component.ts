@@ -38,14 +38,12 @@ export class AppComponent {
     this.carregando = true;
     setTimeout(async () => {
       var res: any = await this.http
-        .get('http://localhost:3000/listaCursos')
+        .get('http://25.1.80.110:3000/listaCursos')
         .toPromise();
       let list: [] = res;
       list.reverse();
       this.listaCursos = list;
       this.listaCursosBackup = list;
-      console.log(this.listaCursos);
-      console.log(this.listaCursosBackup);
       this.carregando = false;
     }, 500);
   }
@@ -163,9 +161,9 @@ export class AppComponent {
 
   async deletaCurso(id: any) {
     this.carregando = true;
-    console.log(`http://localhost:3000/listaCursos/` + id);
+    console.log(`http://25.1.80.110:3000/listaCursos/` + id);
     var res = await this.http
-      .delete(`http://localhost:3000/listaCursos/${id}`)
+      .delete(`http://25.1.80.110:3000/listaCursos/${id}`)
       .toPromise();
     setTimeout(() => {
       this.carregarDados();
